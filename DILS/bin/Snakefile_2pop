@@ -25,17 +25,18 @@
 #################################################################################################################################
 
 # python
-python = 'python2'
+#python = 'python2'
+python = 'pypy'
 
 # links to the codes
-binpath = "/shared/mfs/data/home/croux/softwares/DILS/bin"
+binpath = "/mnt/DILS/bin"
 
 # general property
 nmultilocus = 1000 # number of multilocus simulations per iteration (500)
 threshold_sim = 20 # number of arbitrary considered loci in the dataset
 
 # model comparison
-nCPU_R = 8 # number of CPUs for the model comp for the model forest R functions
+nCPU_R = 20 # number of CPUs for the model comp for the model forest R functions
 ntree = 1000 # number of tree for the random forest (RF) model comparison
 nIterations_model_comp = 10 # number of subdirectories for the simulations used in the RF model comparison
 ITERATIONS_MODEL_COMP = range(nIterations_model_comp)
@@ -203,7 +204,7 @@ rule RNAseqFGT:
 	threads: 1
 	shell:	
 		"""
-		{binpath}/RNAseqFGT.sh {params.nameA} {params.nameB} {input.infos} {input.fasta} {input.nLoci} {output.tmp} {output.results} {binpath} || true
+		sh {binpath}/RNAseqFGT.sh {params.nameA} {params.nameB} {input.infos} {input.fasta} {input.nLoci} {output.tmp} {output.results} {binpath} || true
 		"""
 
 
