@@ -1,0 +1,10 @@
+#!/bin/bash
+source /tools/miniconda/etc/profile.d/conda.sh
+while test "$CONDA_PREFIX"
+do
+    conda deactivate
+done
+
+conda activate latex
+/tools/miniconda/envs/latex/bin/pdflatex "$@"
+
