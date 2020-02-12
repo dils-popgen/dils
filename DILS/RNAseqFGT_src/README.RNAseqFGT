@@ -1,0 +1,105 @@
+          ###############
+          #  RNAseqFGT  #
+          ###############
+
+
+###############
+# Introduction
+##############
+
+RNAseqFGT searches for recombination events using the four-gamete test (FGT) on unphased sequences. Typically, RNAseqFGT was developed to be run on polymorphism dataset obtained by RNAseq. 
+
+RNAseqFGT performs the FGT exclusively on bi-allelic SNPs: SNPs with more than 2 alleles are ignored and indels are considered as non-informative sites (N's).
+
+For each locus, RNAseqFGT performs the FGT on all possible pairs of bi-allelic SNPs, to detect recombination events. The program reports the number of non-overlapping recombinant intervals (to avoid counting twice the same recombination event). Details about the positions of bi-allelic SNPs, the total list of recombinant intervals and the subset of non-overlapping recombinant intervals can be obtained by using the option "-v".
+
+The list of haplotypes present in the sample is obtained by analyzing the genotype of each individual. For a given pair of SNPs (say A and B):
+	- if the individual is homozygote at both sites (e.g. A/A,B/B) then we can infer the presence of one haplotype (AB).
+	- if the individual is homozygote at one site and heterozygote at the other site (e.g. A/A,B/b) then we can infer the presence of two haplotypes (AB + Ab).
+	- if the individual is heterozygote at both sites (A/a,B/b) then it is not possible to identify its haplotypes.
+
+For a given pair of SNPs, the FGT is positive if the four different haplotypes are detected in the sample. 
+
+The power of the FGT depends on the SNP density in the locus and on the number of individuals in the sample: at least one pair of non-singleton SNPs with four identifiable gametes (i.e. at least 3 to 4 individuals with informative genotypes) is required to be able to detect a potential recombination event. For loci that do not match these criteria, the number of detected recombination events is reported as "NA". To give insights on the capacity of the FGT to detect potential recombination events, the program provides several summary statistics for each locus:
+ - number of bi-allelic SNPs
+ - number of individuals
+ - average fraction of individuals with known genotype (i.e. non-N) at SNP sites
+ - length of the locus sequence alignment
+ - number of sites with at least two informative (i.e. non-N) sequences
+ - average number of informative (i.e. non-N) base per sequence
+
+The program also compute the GC-content (averaged on all sequences) at each locus.
+
+###############
+# Installation
+##############
+cc -Wall -o RNAseqFGT RNAseqFGT.c RNAseqFGT_seq_reading.c RNAseqFGT_analysis.c -I RNAseqFGT.h
+
+
+Usage: RNAseqFGT fasta_file out_file [-v] 
+
+fasta_file : input file (FASTA format)
+out_file   : output file 
+Option -v (verbose): print on stdout the details on detected SNPs and recombination events.
+
+
+Example: 
+
+RNAseqFGT test.fas test.out -v 
+
+
+
+
+###############
+# Input file format
+##############
+
+RNAseqFGT takes as input a FASTA sequence file, containing the genotypes of all individuals. The input file can contain data from multiple loci. The FASTA file must be sorted by locus and by individual. The genotype of each individual is represented by two sequences (but beware that these sequences are not considered as haplotypes; it is just a convenient way to represent genotypes). 
+Sequence identifiers should be like this:
+>LocusID|SpeciesID|IndividualID|Allele_number
+
+Example:
+
+>Locus1|Homo_erectus|Individual1|Allele_1
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus1|Homo_erectus|Individual1|Allele_2
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus1|Homo_erectus|Individual2|Allele_1
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus1|Homo_erectus|Individual2|Allele_2
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus1|Homo_erectus|Individual3|Allele_1
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus1|Homo_erectus|Individual3|Allele_2
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus2|Homo_erectus|Individual1|Allele_1
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus2|Homo_erectus|Individual1|Allele_2
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus2|Homo_erectus|Individual2|Allele_1
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus2|Homo_erectus|Individual2|Allele_2
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus2|Homo_erectus|Individual3|Allele_1
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+>Locus2|Homo_erectus|Individual3|Allele_2
+GGGAAGATGGAGGAAATCGGGATCTTGGTGGAGAAAACCCAGGATG
+
+
+###############
+# Output file 
+##############
+The program writes one output line for each locus, with different items:
+
+LocusID: locus identifier
+Species: species identifier
+N_individuals: number of individuals sampled at that locus
+AlnSeqLength: length of the sequence alignment
+N_sites_noN: number of alignment sites at which there are at least two informative (i.e. non-N) sequences
+AvgSeqLg_noN: average number of informative (i.e. non-N) base per sequence
+N_SNPsBi: number of bi-allelic SNPs
+N_SNPs_Mult: number of SNPs with more than two alleles
+GC_content: GC-content (average over all sequences, excluding N's)
+NbRec: number of non-overlapping recombinant intervals (or NA if less than two SNPs or less than four identifiable haplotypes).
+SNP_coverage: average fraction of individuals with known genotype (i.e. non-N) at bi-allelic SNP sites
+

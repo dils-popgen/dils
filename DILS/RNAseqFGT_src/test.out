@@ -1,0 +1,6 @@
+LocusID	Species	N_individuals	AlnSeqLength	N_sites_noN	AvgSeqLg_noN	N_SNPsBi	N_SNPs_Mult	GC_content	NbRec	SNP_coverage
+Contig69	Emys_orbicularis	10	1320	1270	867	8	0	0.604	0	0.7
+Contig74	Emys_orbicularis	10	1275	264	46	2	0	0.443	0	0.2
+Contig75	Emys_orbicularis	10	903	461	46	0	0	0.403	NA	NA
+Contig79	Emys_orbicularis	10	1740	1615	848	8	0	0.470	1	0.5
+Contig84	Emys_orbicularis	10	324	134	47	0	0	0.541	NA	NA
