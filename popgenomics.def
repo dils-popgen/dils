@@ -17,7 +17,7 @@ From: ubuntu:18.04
 	apt-get update
 	apt-get install -y git gcc wget vim make
 
-	mkdir /tools
+#	mkdir /tools
 	cd /tools
 
 	wget https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86_64.sh
