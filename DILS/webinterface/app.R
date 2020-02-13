@@ -1263,9 +1263,9 @@ server <- function(input, output, session = session) {
 	DILS_command <- reactiveVal(0)
 	#observeEvent( input$runABC, {DILS_command(paste('snakemake -p -j 999 --snakefile ../2pops/Snakefile --configfile config_', time_stamp(), '.yaml --cluster-config ../cluster.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}"', sep=''))})
 
-	observeEvent( input$runABC, {DILS_command(paste('singularity exec popgenomics.sif snakemake --snakefile /mnt/Snakefile_2pop -p -j 50 --configfile ', time_stamp(), '.yaml', sep=''))})
+	observeEvent( input$runABC, {DILS_command(paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j 50 --configfile ', time_stamp(), '.yaml', sep=''))})
 	output$DILS_command <- renderText({DILS_command()})
-	observeEvent( input$runABC, {DILS_command(system(paste('snakemake --snakefile /mnt/DILS/bin/Snakefile_2pop -p -j 50 --configfile ', time_stamp(), '.yaml &', sep='')))})
+	observeEvent( input$runABC, {DILS_command(system(paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j 50 --configfile ', time_stamp(), '.yaml &', sep='')))})
 
 
 
