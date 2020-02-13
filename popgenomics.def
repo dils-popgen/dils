@@ -8,6 +8,7 @@ From: ubuntu:18.04
 	wrappers/Rscript /usr/bin/Rscript
 	wrappers/pypy /usr/bin/pypy
 	wrappers/pdflatex /usr/bin/pdflatex
+	DILS /tools
 
 %post
 
@@ -75,9 +76,9 @@ From: ubuntu:18.04
 
 
 
-	git clone https://github.com/popgenomics/DILS.git
-	chmod 755 DILS/bin/*
-	cd DILS/msnsam
+#	git clone https://github.com/popgenomics/DILS.git
+	chmod 755 bin/*
+	cd msnsam
 	./clms
 
 
@@ -87,7 +88,7 @@ From: ubuntu:18.04
 
 
 %runscript
-	exec Rscript /tools/DILS/webinterface/app.R "$@"
+	exec Rscript /tools/webinterface/app.R "$@"
 #	. /tools/miniconda/bin/activate
 #	conda init
 #	exec "$@"

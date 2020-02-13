@@ -29,7 +29,7 @@
 python = 'pypy'
 
 # links to the codes
-binpath = "/tools/DILS/bin"
+binpath = "/tools/bin"
 
 # general property
 nmultilocus = 1000 # number of multilocus simulations per iteration (500)
