@@ -1319,7 +1319,7 @@ server <- function(input, output, session = session) {
 			allData = list()
 			
 			untar(fileName$datapath, exdir = getwd())
-			rootName = strsplit(fileName$name, '.', fixed=T)[[1]][1]
+			rootName = strsplit(fileName$datapath, '.', fixed=T)[[1]][1]
 		
 			users_infos = read.table(paste(rootName, "/general_infos.txt", sep=''), h=F, sep=',')
 			hierarchical = read.table(paste(rootName, "/modelComp/hierarchical_models.txt", sep=''), h=F, sep='\t')
