@@ -3506,7 +3506,7 @@ server <- function(input, output, session = session) {
 		meta = read.table('/tools/webinterface/metaanalysis.txt', sep='\t', h=T)
 		
 		# popphyl
-		x = read.table("popPhyl.txt", h=T)
+		x = read.table("/tools/webinterface/popPhyl.txt", h=T)
 		pmig_HH = x$Pongoing_migration_Mhetero_Nhetero 
 		proba_migration = pmig_HH
 		seuil1 = 0.6419199
