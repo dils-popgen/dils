@@ -50,7 +50,7 @@ From: ubuntu:18.04
 	conda install -n R -c conda-forge r-shinyjs 
 	conda install -n R -c conda-forge r-dt 
 	conda install -n R -c conda-forge r-shinywidgets 
-	conda install -c conda-forge r-shinycssloaders 
+	conda install -n R -c conda-forge r-shinycssloaders 
 	conda install -n R -c conda-forge r-devtools 
 	Rscript -e 'library(devtools); install_github("nik01010/dashboardthemes")'
 	conda install -n R -c conda-forge r-shinyhelper 
