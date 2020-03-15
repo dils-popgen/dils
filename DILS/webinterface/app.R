@@ -3594,16 +3594,18 @@ server <- function(input, output, session = session) {
 				rootName = strsplit(fileName$name, '.', fixed=T)[[1]][1]
 				fluidPage(style="margin-top:-3em",
 					if( rootName%in%allData()[['meta']][,1]==FALSE ){
-						fluidRow(
-							HTML('<H4>Clicking on this button <b>will save</b>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1)</b> the user&#39;s email address to contact him/her for future collaborative meta-analysis<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2)</b> the names of the organisms and the position of the point on the graph<br><b>Everything else uploaded by the user <u>will be deleted</u> from the server</b>.<br><br>An unfortunate click <b>can be cancelled</b> by uploading the same archive a second time and then clicking on <b>REMOVE THE POINT</b> button</H4>'),
-							actionButton("update_greyzone", "UPDATE THE FIGURE WITH YOUR RESULTS")
-						)
-					}else{
-						fluidRow(
-							HTML('<H4><b>This analysis is already part of the figure</b>.<br>You can remove it by clicking on the <b>REMOVE THE POINT</b> button.</H4>'),
-							actionButton("downgrade_greyzone", "REMOVE THE POINT")
-						)
+						if(allData()[['users_infos']][1,2]==2){
+							fluidRow(
+								HTML('<H4>Clicking on this button <b>will save</b>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1)</b> the user&#39;s email address to contact him/her for future collaborative meta-analysis<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2)</b> the names of the organisms and the position of the point on the graph<br><b>Everything else uploaded by the user <u>will be deleted</u> from the server</b>.<br><br>An unfortunate click <b>can be cancelled</b> by uploading the same archive a second time and then clicking on <b>REMOVE THE POINT</b> button</H4>'),
+								actionButton("update_greyzone", "UPDATE THE FIGURE WITH YOUR RESULTS")
+							)
+						}else{
+							fluidRow(
+								HTML('<H4><b>This analysis is already part of the figure</b>.<br>You can remove it by clicking on the <b>REMOVE THE POINT</b> button.</H4>'),
+								actionButton("downgrade_greyzone", "REMOVE THE POINT")
+							)
 
+						}
 					},
 					
 					fluidRow(
