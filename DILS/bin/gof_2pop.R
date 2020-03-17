@@ -36,6 +36,8 @@ for(i in commandArgs()){
         if(tmp[[1]][1] == 'writeDistribution'){ writeDistribution = as.logical(tmp[[1]][2]) }
 }
 
+library(tidyverse)
+
 ### Summary Stats
 # simulations
 x = NULL
@@ -103,6 +105,9 @@ if( writeDistribution==TRUE){
 	origin = c('observed dataset', rep('prior', nrow(prior_ss)), rep('posterior', nrow(gof1_ss)), rep('optimized posterior', nrow(gof2_ss)))
 	PCA = rbind(cbind(obs_ss, obs_sfs), cbind(prior_ss, prior_sfs), cbind(gof1_ss, gof1_sfs), cbind(gof2_ss, gof2_sfs))
 	PCA = cbind(PCA, origin)
+	
+	PCA = as_tibble(PCA)
+	PCA = PCA %>% select( -c(minDivAB_avg, minDivAB_std, maxDivAB_avg, maxDivAB_std,Gmin_avg, Gmin_std, Gmax_avg, Gmax_std ) )
 	write.table(PCA, paste(timeStamp, '/distribution_PCA.txt', sep=''), col.names=T, row.names=F, quote=F, sep='\t')
 }
 

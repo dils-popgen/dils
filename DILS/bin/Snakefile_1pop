@@ -24,7 +24,14 @@
 #################################################################################################################################
 #################################################################################################################################
 
+<<<<<<< HEAD
 python  'pypy'
+=======
+#python = 'python2'
+python = 'pypy'
+
+#binpath = "/shared/mfs/data/home/croux/softwares/DILS/bin"
+>>>>>>> d5e60d5fa1dc2f9cb40d047ba19a9e36e0973a08
 binpath = "/tools/bin"
 
 nmultilocus = 1000 # number of multilocus simulations per iteration (500)
@@ -127,7 +134,11 @@ rule fasta2ABC_1pop:
 	shell:
 		"""
 		x=$(date)
+<<<<<<< HEAD
 		{python} {binpath}/fasta2ABC_1pop.py {infile} {timeStamp} {params.nameA} {params.nameOutgroup} {params.region} {params.Lmin} {params.max_N_tolerated} {params.nMin} {params.mu} {params.rho_over_theta} {binpath}
+=======
+		pypy {binpath}/fasta2ABC_1pop.py {infile} {timeStamp} {params.nameA} {params.nameOutgroup} {params.region} {params.Lmin} {params.max_N_tolerated} {params.nMin} {params.mu} {params.rho_over_theta} {binpath}
+>>>>>>> d5e60d5fa1dc2f9cb40d047ba19a9e36e0973a08
 		echo "nSpecies,"{nspecies}>{timeStamp}/general_infos.txt
 		echo "nameA,"{nameA}>>{timeStamp}/general_infos.txt
 		y=$( cat {timeStamp}/nLoci.txt )
@@ -170,7 +181,7 @@ rule simulationsModelComp:
 	threads: 1
 	shell:
 		"""
-		{binpath}/{submit_simulations} {outgroup} {params.nmultilocus} {wildcards.i} {wildcards.model} {nameA} modelComp {wildcards.model} {config_yaml} {timeStamp} {binpath}
+		{python} {binpath}/{submit_simulations} {outgroup} {params.nmultilocus} {wildcards.i} {wildcards.model} {nameA} modelComp {wildcards.model} {config_yaml} {timeStamp} {binpath}
 		"""
 
 rule modelComparison:
@@ -189,7 +200,7 @@ rule modelComparison:
 	threads: nCPU_R
 	shell:
 		"""
-		{binpath}/model_comp_1pop_allModels.R nameA={nameA} timeStamp={timeStamp} nMin={nMin} sub_dir_sim=modelComp nSubdir={nIterations_model_comp} ntree={ntree} ncores={nCPU_R} outgroup={outgroup}
+		Rscript	{binpath}/model_comp_1pop_allModels.R nameA={nameA} timeStamp={timeStamp} nMin={nMin} sub_dir_sim=modelComp nSubdir={nIterations_model_comp} ntree={ntree} ncores={nCPU_R} outgroup={outgroup}
 		"""
 
 rule simulation_best_model:
@@ -206,7 +217,7 @@ rule simulation_best_model:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/{submit_simulations} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model best_model {config_yaml} {timeStamp} {binpath}
+		{python} {binpath}/{submit_simulations} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model best_model {config_yaml} {timeStamp} {binpath}
 		"""
 
 # get the posterior
@@ -224,7 +235,7 @@ rule estimation_best_model:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior1} binpath={binpath} transf=logit
+		Rscript {binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior1} binpath={binpath} transf=logit
 		"""
 
 
@@ -240,7 +251,7 @@ rule simulation_best_model_2:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_2 best_model ${{PWD}}/{input.posterior} {timeStamp} disjoint {binpath}
+		{python} {binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_2 best_model ${{PWD}}/{input.posterior} {timeStamp} disjoint {binpath}
 		"""
 
 rule estimation_best_model_2:
@@ -256,7 +267,7 @@ rule estimation_best_model_2:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_2 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} transf=logit
+		Rscript {binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_2 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} transf=logit
 		"""
 
 rule simulation_best_model_3:
@@ -270,7 +281,7 @@ rule simulation_best_model_3:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_3 best_model ${{PWD}}/{input.posterior} {timeStamp} randomBeta {binpath}
+		{python} {binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_3 best_model ${{PWD}}/{input.posterior} {timeStamp} randomBeta {binpath}
 		"""
 
 rule estimation_best_model_3:
@@ -286,7 +297,7 @@ rule estimation_best_model_3:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_3 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior3} binpath={binpath} transf=logit
+		Rscript {binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_3 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior3} binpath={binpath} transf=logit
 		"""
 
 
@@ -302,7 +313,7 @@ rule simulation_best_model_4:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_4 best_model ${{PWD}}/{input.posterior} {timeStamp} disjoint {binpath}
+		{python} {binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_4 best_model ${{PWD}}/{input.posterior} {timeStamp} disjoint {binpath}
 		"""
 
 rule estimation_best_model_4:
@@ -316,7 +327,7 @@ rule estimation_best_model_4:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_4 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} transf=logit
+		Rscript {binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_4 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} transf=logit
 		"""
 
 rule simulation_best_model_5:
@@ -330,7 +341,7 @@ rule simulation_best_model_5:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_5 best_model ${{PWD}}/{input.posterior} {timeStamp} randomBeta {binpath}
+		{python} {binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_5 best_model ${{PWD}}/{input.posterior} {timeStamp} randomBeta {binpath}
 		"""
 
 rule estimation_best_model_5:
@@ -345,7 +356,7 @@ rule estimation_best_model_5:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_5 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior3} binpath={binpath} transf=logit
+		Rscript {binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_5 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior3} binpath={binpath} transf=logit
 		"""
 
 # third optimization
@@ -360,7 +371,7 @@ rule simulation_best_model_6:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_6 best_model ${{PWD}}/{input.posterior} {timeStamp} disjoint {binpath}
+		{python} {binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_6 best_model ${{PWD}}/{input.posterior} {timeStamp} disjoint {binpath}
 		"""
 
 rule estimation_best_model_6:
@@ -374,7 +385,7 @@ rule estimation_best_model_6:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_6 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} transf=logit
+		Rscript {binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_6 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} transf=logit
 		"""
 
 rule simulation_best_model_7:
@@ -388,7 +399,7 @@ rule simulation_best_model_7:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_7 best_model ${{PWD}}/{input.posterior} {timeStamp} randomBeta {binpath}
+		{python} {binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} best_model_7 best_model ${{PWD}}/{input.posterior} {timeStamp} randomBeta {binpath}
 		"""
 
 rule estimation_best_model_7:
@@ -403,7 +414,7 @@ rule estimation_best_model_7:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_7 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior3} binpath={binpath} transf=logit
+		Rscript {binpath}/estimates_1pop_best.R nameA={nameA} nMin={nMin} sub_dir_sim=best_model_7 nSubdir={nIterations_estim} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior3} binpath={binpath} transf=logit
 		"""
 
 # gof #1
@@ -418,7 +429,7 @@ rule simulation_gof:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} gof gof ${{PWD}}/{input.posterior} {timeStamp} joint {binpath}
+		{python} {binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} gof gof ${{PWD}}/{input.posterior} {timeStamp} joint {binpath}
 		"""
 
 rule gof:
@@ -431,7 +442,7 @@ rule gof:
 		"{timeStamp}/gof/gof_sfs.txt"
 	shell:
 		"""
-		{binpath}/gof_1pop_v2.R timeStamp={timeStamp} nIterations_gof={nIterations_gof} sub_dir=gof writeDistribution=F
+		Rscript {binpath}/gof_1pop_v2.R timeStamp={timeStamp} nIterations_gof={nIterations_gof} sub_dir=gof writeDistribution=F
 		"""
 
 # GOF #2
@@ -504,7 +515,7 @@ rule simulation_gof_2:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		{binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} gof_2 gof ${{PWD}}/{input.posterior} {timeStamp} joint {binpath}
+		{python} {binpath}/{submit_simulations_gof} {outgroup} {params.nmultilocus} {wildcards.i} ${{best_model}} {nameA} gof_2 gof ${{PWD}}/{input.posterior} {timeStamp} joint {binpath}
 		"""
 
 
@@ -519,7 +530,7 @@ rule gof_2:
 		"{timeStamp}/gof_2/gof_sfs.txt"
 	shell:
 		"""
-		{binpath}/gof_1pop_v2.R timeStamp={timeStamp} nIterations_gof={nIterations_gof} sub_dir=gof_2 writeDistribution=T
+		Rscript {binpath}/gof_1pop_v2.R timeStamp={timeStamp} nIterations_gof={nIterations_gof} sub_dir=gof_2 writeDistribution=T
 		"""
 
 # PCA on simulated statistics
@@ -532,7 +543,7 @@ rule PCA_SS:
 		"{timeStamp}/table_eigenvalues_PCA_SS.txt"
 	shell:
 		"""
-		{binpath}/PCA.R timeStamp={timeStamp}
+		Rscript {binpath}/PCA.R timeStamp={timeStamp}
 		"""
 
 

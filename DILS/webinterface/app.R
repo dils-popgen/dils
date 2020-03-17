@@ -1,6 +1,5 @@
 #!/usr/bin/Rscript
 
-print(getwd())
 #################################################################################################################################
 #################################################################################################################################
 #####                                                                                                                       #####
@@ -50,6 +49,7 @@ library(RColorBrewer)
 library(yaml)
 library(ggpubr)
 library(FactoMineR)
+library(shinycssloaders)
 
 pvalue = function(distribution, obs){
 	obs = as.numeric(obs)
@@ -252,7 +252,8 @@ welcome_page <- fluidPage(
 			# Main panel for displaying outputs
 			column(width=8,
 				# Output: density
-				plotOutput(outputId = "genomic_hetero")
+#				plotOutput(outputId = "genomic_hetero")
+				plotlyOutput(outputId = "genomic_hetero_plotly")
 			)
 		),
 	
@@ -288,7 +289,8 @@ welcome_page <- fluidPage(
 			# Main panel for displaying outputs
 			column(width=8,
 				# Output: density
-				plotOutput(outputId = "migration_hetero_beta")
+#				plotOutput(outputId = "migration_hetero_beta")
+				plotlyOutput(outputId = "migration_hetero_beta_plotly")
 			)
 		),
 
@@ -306,13 +308,14 @@ welcome_page <- fluidPage(
 				# Input: Slider for the number of bins
 				sliderInput(inputId = "Mexample", label = h3("Effective migration rates (number of migrants per generation):"), min = 0, max = 10, value = 5, step=0.1),
 				sliderInput(inputId = "nLociExample", label = h3("Number of studied loci:"), min = 20, max = 1000, value = 100, step=1),
-				sliderInput(inputId = "propBarrierExample", label = h3("Proportion of barriers (in %):"), min = 0, max = 100, value = 50, step=1)
+				sliderInput(inputId = "propBarrierExample", label = h3("Proportion of barriers (in %):"), min = 0, max = 100, value = 15, step=1)
 			),
 			
 			# Main panel for displaying outputs
 			column(width=8,
 				# Output: density
-				plotOutput(outputId = "migration_hetero_bimodal")
+#				plotOutput(outputId = "migration_hetero_bimodal")
+				plotlyOutput(outputId = "migration_hetero_bimodal_plotly")
 			)
 		)
 
@@ -323,7 +326,7 @@ welcome_page <- fluidPage(
 		htmlOutput("model_comparisons_1pop"),
 		HTML('<h3><b>DILS</b> performs hierarchical model comparisons.</h3>'),
 		HTML('<h3><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.</b> comparison between all models with <b>Expansion</b> ({<i>Ne</i><sub>homo</sub>; <i>Ne</i><sub>hetero</sub>}) <i>versus</i> <b>Constant size</b> ({<i>Ne</i><sub>homo</sub>; <i>Ne</i><sub>hetero</sub>}) <i>versus</i> <b>Contraction</b> ({<i>Ne</i><sub>homo</sub>; <i>Ne</i><sub>hetero</sub>})</h3>'),
-		HTML('<h3><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.</b> the last step of the model comparison is to determine whether effective size (<b><i>Ne</i></b>) is homogeneously or heterogenously distributed in genomes.</h3>')
+		HTML('<h3><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.</b> the last step of the model comparison is to determine whether effective size (<b><i>Ne</i></b>) is homogeneously or heterogenously distributed in genomes for the best supported model in <b>step 1</b>.</h3>')
 	),
 	
 	boxPlus(title = h2("Model comparisons for 2 populations/species"), width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = TRUE, collapsed = TRUE,
@@ -383,7 +386,7 @@ upload_data <- fluidPage(
 		boxPlus(title = h2("Number of ABC analysis to run"), width = 6, closable = FALSE, status = "danger", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
 		shinyjs::useShinyjs(),
 		selectInput("number_of_ABC", label = h4("1 to 5 ABC analyses can be performed from the same input file"), choices = list("1" = 1, "2" = 2, "3" = 3, "4" = 4, "5" = 5), selected = 1),
-		HTML('<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>DILS</b> runs freely on a computer server.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To avoid saturating it, we have limited the number of analyses carried out at a given time and for a given input file to <b>5</b>.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beyond 5, you will have to upload it again whenever you want.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The selected number of analysis cannot be modified once the choices had been checked/validated</h4>')
+		HTML('<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>DILS</b> runs freely on a computer server.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To avoid saturating it, we have limited the number of analyses carried out at a given time and for a given input file to <b>5</b>.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beyond 5, you will have to upload it again whenever you want.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>The selected number of analysis cannot be modified</b> once the choices had been checked/validated</h4>')
 	),
 	
 	boxPlus(title = h2("Email address"), width = 6, closable = FALSE, status = "primary", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
@@ -512,7 +515,7 @@ upload_data <- fluidPage(
 filtering <- fluidPage(
 	fluidRow(
 		column(width = 4,
-			boxPlus(title = h2("Maximum proportion of missing data (N, gaps, ...)"), height = 225, width = NULL, closable = FALSE, status = "primary", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
+			boxPlus(title = h2("Maximum proportion of missing data (N, gaps, ...)"), height = 325, width = NULL, closable = FALSE, status = "primary", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
 				sliderInput("max_N_tolerated", label = NULL,	min = 0, max = 1, value = 0.1, step = 0.005)
 			),
 			boxPlus(
@@ -527,7 +530,7 @@ filtering <- fluidPage(
 		),
 		
 		column(width = 4,
-			boxPlus(title = h2("Minimum sequence length per gene"), height = 225, width = NULL, closable = FALSE, status = "success", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
+			boxPlus(title = h2("Minimum sequence length per gene"), height = 325, width = NULL, closable = FALSE, status = "success", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
 				numericInput("Lmin", label = NULL, value = 30, min = 1, max = 10000)
 			),
 
@@ -554,7 +557,7 @@ filtering <- fluidPage(
 		),
 		
 		column(width = 4,
-			boxPlus(title = h2("Minimum number of sequences per gene and per population/species"), height = 225, width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
+			boxPlus(title = h2("Minimum number of sequences per gene and per population/species"), height = 325, width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
 				numericInput("nMin", label = NULL, value = 12, min = 2)
 			),
 			
@@ -690,7 +693,11 @@ upload_results <- fluidPage(
 
 
 user_dataset <- fluidPage(
-	uiOutput("visualization_data")
+#	if(is.null(input$results)){
+#		return(loadingState())
+#	}else{
+		uiOutput("visualization_data")
+#	}
 )
 
 
@@ -987,6 +994,48 @@ server <- function(input, output, session = session) {
 		abline(v=input$Ne, lwd=8, col=viridis_pal(option="D")(2)[1])
 	})
 	
+	output$genomic_hetero_plotly <- renderPlotly({
+		Ne=input$Ne
+		alpha=input$alpha
+		beta=input$beta
+
+		y_points = dbeta(0:100/100, alpha, beta)
+		x_points = 0:100/100 * Ne/( alpha / (alpha + beta) )
+
+				
+		x_points_polyg = c(0, x_points, max(x_points), 0)
+		y_points_polyg = c(0, y_points, 0, 0)
+
+		f <- list(
+			family = "Arial",
+			size = 20,
+			color = "#556270"
+		)
+		x <- list(
+			title = "Genomic distribution of <i>Ne</i>",
+			titlefont = f,
+			tickfont = list(size = 18)
+		)
+		y <- list(
+			title = "density",
+			titlefont = f,
+			tickfont = list(size = 18)
+		)
+
+		title <- list(
+			font = list(
+			size = 22, 
+			color = "#556270", 
+			family = "Arial"
+		    ), 
+		    text = "<br>Example of genomic distributions that DILS will try to infer"
+		  )
+
+		plot_ly() %>%
+			add_polygons(x=x_points_polyg, y=y_points_polyg, fillcolor='#c7f464', line=list(width=3,color='#556270')) %>%
+			layout(showlegend = FALSE, xaxis = x, yaxis = y, title = title)
+	})
+	
 	output$migration_hetero_beta <- renderPlot({
 		par(las=1)
 		y_points = dbeta(0:100/100, input$alphaM, input$betaM)
@@ -1005,6 +1054,88 @@ server <- function(input, output, session = session) {
 		distribution = c(rep(0, barriers), rep(input$Mexample, nLociExample-barriers))
 		hist(distribution, xlab = expression(paste("Genomic distribution of ", italic('N.m'), sep=" ")), ylab='Number of loci', main=expression(italic("Bimodal distribution of N.m")), col=viridis_pal(option="D")(2)[2], cex.main = 1.5, cex.axis = 1.5, cex.lab=1.5, xlim=1.2*range(distribution))
 	})
+	
+	output$migration_hetero_beta_plotly <- renderPlotly({
+		M=input$M
+		alpha=input$alphaM
+		beta=input$betaM
+
+		y_points = dbeta(0:100/100, alpha, beta)
+		x_points = 0:100/100 * M/( alpha / (alpha + beta) )
+
+				
+		x_points_polyg = c(0, x_points, max(x_points), 0)
+		y_points_polyg = c(0, y_points, 0, 0)
+
+		f <- list(
+			family = "Arial",
+			size = 20,
+			color = "#556270"
+		)
+		x <- list(
+			title = "Genomic distribution of <i>N.m</i>",
+			titlefont = f,
+			tickfont = list(size = 18)
+		)
+		y <- list(
+			title = "density",
+			titlefont = f,
+			tickfont = list(size = 18)
+		)
+
+		title <- list(
+			font = list(
+			size = 22, 
+			color = "#556270", 
+			family = "Arial"
+		    ), 
+		    text = "<br>Example of genomic distributions that DILS will try to infer"
+		  )
+
+		plot_ly() %>%
+			add_polygons(x=x_points_polyg, y=y_points_polyg, fillcolor='#c7f464', line=list(width=3,color='#556270')) %>%
+			layout(showlegend = FALSE, xaxis = x, yaxis = y, title = title)
+	})
+
+	output$migration_hetero_bimodal_plotly <- renderPlotly({
+		f <- list(
+			family = "Arial",
+			size = 20,
+			color = "#556270"
+		)
+		
+		x <- list(
+			title = "Genomic distribution of <i>N.m</i>",
+			titlefont = f,
+			tickfont = list(size = 18)
+		)
+		
+		y <- list(
+			title = "Number of loci",
+			titlefont = f,
+			tickfont = list(size = 18)
+		)
+
+		title <- list(
+			font = list(
+				size = 22, 
+				color = "#556270", 
+				family = "Arial"
+			), 
+			text = "<br>Bimodal distribution of <i>N.m</i>"
+		)
+		nLociExample = input$nLociExample
+		propBarrierExample = input$propBarrierExample
+		Mexample = input$Mexample
+	
+		nLociExample = nLociExample
+		barriers = as.integer(propBarrierExample/100 * nLociExample)
+		distribution = c(rep(0, barriers), rep(Mexample, nLociExample-barriers))
+		plot_ly(x = distribution,
+			type = "histogram",
+			marker=list(color='#c7f464')) %>%
+		layout(bargap=0.2, showlegend = FALSE, xaxis = x, yaxis = y, title = title)
+	})
 
 	#	UPLOAD DATA
 	## GET THE SUMMARY STATS ABOUT THE UPLOADED FILE
@@ -1013,7 +1144,7 @@ server <- function(input, output, session = session) {
 		if(is.null(input$infile)){return ()}
 		withProgress(message = 'Getting the species', detail = NULL, value = 0, {
 		incProgress(1/2)
-		print(input$infile$datapath)
+		#print(input$infile$datapath)
 		return(system(paste("cat", input$infile$datapath, "| grep '>' | cut -d '|' -f2 | sort -u", sep=" "), intern = T))
 		incProgress(1/2)
 		})
@@ -1267,11 +1398,26 @@ server <- function(input, output, session = session) {
 	DILS_command <- reactiveVal(0)
 	#observeEvent( input$runABC, {DILS_command(paste('snakemake -p -j 999 --snakefile ../2pops/Snakefile --configfile config_', time_stamp(), '.yaml --cluster-config ../cluster.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}"', sep=''))})
 
-	observeEvent( input$runABC, {DILS_command(paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j 50 --configfile ', time_stamp(), '.yaml', sep=''))})
-	output$DILS_command <- renderText({DILS_command()})
-	observeEvent( input$runABC, {DILS_command(system(paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j 50 --configfile ', time_stamp(), '.yaml &', sep='')))})
+	#mode user 
+	#observeEvent( input$runABC, {DILS_command(paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j 50 --configfile ', time_stamp(), '.yaml', sep=''))})
 
+<<<<<<< HEAD
+=======
+	#mode dev
+		#observeEvent( input$runABC, {DILS_command(paste('singularity exec --bind /chemin/DILS:/mnt popgenomics.sif snakemake --snakefile /mnt/bin/Snakefile_2pop -p -j 6 --configfile ', time_stamp(), '.yaml', sep=''))})
+		observeEvent( input$runABC, {
+			if(input$nspecies==1){
+				DILS_command(system(paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j 400 --configfile ', time_stamp(), '.yaml &', sep='')))
+			}
+			
+			if(input$nspecies==2){
+				DILS_command(system(paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j 400 --configfile ', time_stamp(), '.yaml &', sep='')))
+			}
+		})
+		
+		output$DILS_command <- renderText({DILS_command()})
 
+>>>>>>> d5e60d5fa1dc2f9cb40d047ba19a9e36e0973a08
 	## Check upload
 	output$check_upload_info <- renderUI({
 		if(input$check_upload == FALSE) {
@@ -1321,9 +1467,11 @@ server <- function(input, output, session = session) {
 		}else{
 			allData = list()
 			outputDir = getwd()
+
 			untar(fileName$datapath, exdir = outputDir)
 			rootName = strsplit(paste(outputDir, "/", fileName$name, sep=""), '.', fixed=T)[[1]][1]
 			#rootName = strsplit(fileName$datapath, '.', fixed=T)[[1]][1]
+
 			users_infos = read.table(paste(rootName, "/general_infos.txt", sep=''), h=F, sep=',')
 			hierarchical = read.table(paste(rootName, "/modelComp/hierarchical_models.txt", sep=''), h=F, sep='\t')
 			ABCstatGlobal = read.table(paste(rootName, "/ABCstat_global.txt", sep=''), h=T)
@@ -1413,7 +1561,10 @@ server <- function(input, output, session = session) {
 				tabPanel("Definitions of statistics and parameters", uiOutput("definitions"))
 			)
 		}else{
-			return()
+			fluidPage(
+				HTML('<h3>This page will display the DILS output once uploaded at <b><font color="#c7f464"><i class="fas fa-cloud-upload-alt"></i></font> Upload results</b></h3>'),
+				loadingState()
+			)
 		}
 	})
 
@@ -1430,7 +1581,7 @@ server <- function(input, output, session = session) {
 							),
 						
 						column( width = 12, style="margin-top:-0.5em",
-							plotlyOutput("plot_obs_stats_sites")
+							withSpinner(plotlyOutput("plot_obs_stats_sites"), type=5, color='#c7f464', color.background='#556270')
 							)
 						)
 				),
@@ -1442,7 +1593,7 @@ server <- function(input, output, session = session) {
 							),
 						
 						column( width = 12, style="margin-top:-0.5em",
-							plotlyOutput("plot_obs_stats_diversity")
+							withSpinner(plotlyOutput("plot_obs_stats_diversity"), type=5, color='#c7f464', color.background='#556270')
 							)
 						)
 				),
@@ -1454,7 +1605,7 @@ server <- function(input, output, session = session) {
 							),
 						
 						column( width = 12, style="margin-top:-0.5em",
-							plotlyOutput("plot_obs_stats_tajima")
+							withSpinner(plotlyOutput("plot_obs_stats_tajima"), type=5, color='#c7f464', color.background='#556270')
 							)
 						)
 				),
@@ -1466,7 +1617,7 @@ server <- function(input, output, session = session) {
 							),
 						
 						column( width = 12, style="margin-top:-0.5em",
-							plotlyOutput("plot_obs_stats_divergence")
+							withSpinner(plotlyOutput("plot_obs_stats_divergence"), type=5, color='#c7f464', color.background='#556270')
 							)
 						)
 					)
@@ -1480,7 +1631,7 @@ server <- function(input, output, session = session) {
 							),
 						
 						column( width = 12, style="margin-top:-0.5em",
-							plotlyOutput("plot_obs_stats_1pop")
+							withSpinner(plotlyOutput("plot_obs_stats_1pop"), type=5, color='#c7f464', color.background='#556270')
 							)
 						)
 				}else{
@@ -1499,7 +1650,7 @@ server <- function(input, output, session = session) {
 				tabsetPanel(id = "inferences",
 				type = "tabs",
 				tabPanel("Multilocus model comparison", uiOutput("display_modComp")),
-				tabPanel("Locus specific model comparison", numericInput("threshold_locus_specific_model_comp", label = h3("Posterior probability threshold value below which an inference is considered ambiguous"), width = (0.25*as.numeric(input$dimension[1])), value = 0.9, min = 0, max = 1, step = 0.005), hr(), plotlyOutput("locus_specific_model_comparison", height = 'auto', width = 'auto')),
+				tabPanel("Locus specific model comparison", numericInput("threshold_locus_specific_model_comp", label = h3("Posterior probability threshold value below which an inference is considered ambiguous"), width = (0.25*as.numeric(input$dimension[1])), value = 0.9, min = 0, max = 1, step = 0.005), hr(), withSpinner(plotlyOutput("locus_specific_model_comparison", height = 'auto', width = 'auto'), type=5, color='#c7f464', color.background='#556270')),
 				tabPanel("Estimated parameters", uiOutput("parameters_estimates")),
 				tabPanel("Goodness-of-fit test", uiOutput("gof"))
 				)
@@ -1637,7 +1788,7 @@ server <- function(input, output, session = session) {
 			boxPlus(title = h2("Mutation and recombination"), height = NULL, width = NULL, closable = FALSE, status = "primary", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
 				fluidRow(
 					column(width=5, numericInput("mu", label = h5('Mutation rate'), value = 0.000000003, min = 0, max = 0.00001)),
-					column(width=5, numericInput("rho_over_theta", label = h5('Ratio r/µ'), value = 0.1, min = 0, max = 5))
+					column(width=5, numericInput("rho_over_theta", label = HTML('<h5>Ratio r/&mu;</h5>'), value = 0.1, min = 0, max = 5))
 				)
 			),
 			
@@ -1760,7 +1911,7 @@ server <- function(input, output, session = session) {
 				),
 				
 				fluidRow( width = 12,
-					plotlyOutput( outputId = 'posterior_parameters_2pops')
+					withSpinner(plotlyOutput( outputId = 'posterior_parameters_2pops'), type=5, color='#c7f464', color.background='#556270')
 				)
 			)
 		}
@@ -1777,7 +1928,7 @@ server <- function(input, output, session = session) {
 				),
 				
 				fluidRow( width = 12,
-					plotlyOutput( outputId = 'posterior_parameters_1pop')
+					withSpinner(plotlyOutput( outputId = 'posterior_parameters_1pop'), type=5, color='#c7f464', color.background='#556270')
 				)
 			)
 		}
@@ -2834,7 +2985,8 @@ server <- function(input, output, session = session) {
 					fluidRow( width = 12, plotlyOutput(outputId = "plotly_PCA_gof_2D"))
 				)
 			}else if(input$PCA_gof_choice == 2){
-				fluidRow( width = 12, plotlyOutput(outputId = "table_PCA_gof"))
+#				fluidRow( width = 12, plotlyOutput(outputId = "table_PCA_gof_plotly"))
+				fluidRow( width = 12, dataTableOutput("table_PCA_gof"))
 			}
 		}
 	})
@@ -2847,7 +2999,8 @@ server <- function(input, output, session = session) {
 			if(input$PCA_parameters_choice == 1){
 				fluidRow( width = 12, plotlyOutput(outputId = "plot_PCA_parameters"))
 			}else if(input$PCA_parameters_choice == 2){
-				fluidRow( width = 12, plotlyOutput(outputId = "table_PCA_parameters"))
+				#fluidRow( width = 12, plotlyOutput(outputId = "table_PCA_parameters_plotly"))
+				fluidRow( width = 12, dataTableOutput("table_PCA_parameters"))
 			}
 		}
 	})
@@ -2916,7 +3069,27 @@ server <- function(input, output, session = session) {
 	})
 
 
-	output$table_PCA_parameters <- renderPlotly({
+	output$table_PCA_parameters <- DT::renderDataTable(
+		if(is.null(input$results)) {return(loadingState())}
+		else{
+			x = allData()[['posterior']]#read.table(paste(rootName, "/best_model/posterior_bestModel.txt", sep=''), h=T)
+			y3 = allData()[['optimized_posterior']]#read.table(paste(rootName, "/best_model_5/posterior_bestModel.txt", sep=''), h=T)
+			
+			origin = c(rep("posterior", nrow(x)), rep("optimized posterior", nrow(y3)))
+
+			data = rbind(x, y3)
+			data = cbind(data, origin)
+
+			res.pca <- PCA(data[, -ncol(data)], graph = FALSE, ncp=3)
+
+			x = t(round(res.pca$var$contrib, 2))
+			
+			return(t(x))
+		}
+	)
+
+
+	output$table_PCA_parameters_plotly <- renderPlotly({
 		fileName = input$results
 		
 		if (is.null(fileName)){
@@ -2931,7 +3104,6 @@ server <- function(input, output, session = session) {
 			
 			origin = c(rep("posterior", nrow(x)), rep("optimized posterior", nrow(y3)))
 
-
 			data = rbind(x, y3)
 			data = cbind(data, origin)
 
@@ -2943,7 +3115,6 @@ server <- function(input, output, session = session) {
 				header = list(values = c('<b>Parameters</b>', '<b>Dim. 1</b>', '<b>Dim. 2</b>', '<b>Dim. 3</b>'), line = list(color = dark_grey), fill = list(color = dark_grey), align = c('left','center'), font = list(color = green, size = 15)),
 				cells = list( values=x, line = list(color = dark_grey), fill = list(color = c(light_grey, 'GhostWhite')), align = c('left','center'), font = list(color = c(green, dark_grey), size = 15)), width = (0.75*as.numeric(input$dimension[1])), height = 0.5*as.numeric(input$dimension[2])
 			)
-		
 			return( p1 )
 		}
 	})
@@ -3026,8 +3197,20 @@ server <- function(input, output, session = session) {
 
 					return(p)
 			}})
+	
 			
-			output$table_PCA_gof <- renderPlotly({
+			output$table_PCA_gof <- DT::renderDataTable(
+				if(is.null(input$results)) {return(loadingState())}
+				else{
+					data = allData()[['contribution_PCA']]#read.table( paste(rootName, "/table_contrib_PCA_SS.txt", sep=''), h=T, sep='\t')
+					data = data[ order(data[,1], decreasing=T), ]
+					x = round(data, 2)
+					return(x)
+				}
+			)
+
+			
+			output$table_PCA_gof_plotly <- renderPlotly({
 				fileName = input$results
 				
 				if (is.null(fileName)){
@@ -3418,16 +3601,18 @@ server <- function(input, output, session = session) {
 				rootName = strsplit(fileName$name, '.', fixed=T)[[1]][1]
 				fluidPage(style="margin-top:-3em",
 					if( rootName%in%allData()[['meta']][,1]==FALSE ){
-						fluidRow(
-							HTML('<H4>Clicking on this button <b>will save</b>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1)</b> the user&#39;s email address to contact him/her for future collaborative meta-analysis<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2)</b> the names of the organisms and the position of the point on the graph<br><b>Everything else uploaded by the user <u>will be deleted</u> from the server</b>.<br><br>An unfortunate click <b>can be cancelled</b> by uploading the same archive a second time and then clicking on <b>REMOVE THE POINT</b> button</H4>'),
-							actionButton("update_greyzone", "UPDATE THE FIGURE WITH YOUR RESULTS")
-						)
-					}else{
-						fluidRow(
-							HTML('<H4><b>This analysis is already part of the figure</b>.<br>You can remove it by clicking on the <b>REMOVE THE POINT</b> button.</H4>'),
-							actionButton("downgrade_greyzone", "REMOVE THE POINT")
-						)
+						if(allData()[['users_infos']][1,2]==2){
+							fluidRow(
+								HTML('<H4>Clicking on this button <b>will save</b>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1)</b> the user&#39;s email address to contact him/her for future collaborative meta-analysis<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2)</b> the names of the organisms and the position of the point on the graph<br><b>Everything else uploaded by the user <u>will be deleted</u> from the server</b>.<br><br>An unfortunate click <b>can be cancelled</b> by uploading the same archive a second time and then clicking on <b>REMOVE THE POINT</b> button</H4>'),
+								actionButton("update_greyzone", "UPDATE THE FIGURE WITH YOUR RESULTS")
+							)
+						}else{
+							fluidRow(
+								HTML('<H4><b>This analysis is already part of the figure</b>.<br>You can remove it by clicking on the <b>REMOVE THE POINT</b> button.</H4>'),
+								actionButton("downgrade_greyzone", "REMOVE THE POINT")
+							)
 
+						}
 					},
 					
 					fluidRow(
