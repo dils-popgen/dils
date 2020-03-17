@@ -24,8 +24,8 @@
 #################################################################################################################################
 #################################################################################################################################
 
-
-binpath = "/shared/mfs/data/home/croux/softwares/DILS/bin"
+python  'pypy'
+binpath = "/tools/bin"
 
 nmultilocus = 1000 # number of multilocus simulations per iteration (500)
 nIterations_model_comp = 10 # number of subdirectories for the simulations used in the RF model comparison
@@ -127,7 +127,7 @@ rule fasta2ABC_1pop:
 	shell:
 		"""
 		x=$(date)
-		{binpath}/fasta2ABC_1pop.py {infile} {timeStamp} {params.nameA} {params.nameOutgroup} {params.region} {params.Lmin} {params.max_N_tolerated} {params.nMin} {params.mu} {params.rho_over_theta} {binpath}
+		{python} {binpath}/fasta2ABC_1pop.py {infile} {timeStamp} {params.nameA} {params.nameOutgroup} {params.region} {params.Lmin} {params.max_N_tolerated} {params.nMin} {params.mu} {params.rho_over_theta} {binpath}
 		echo "nSpecies,"{nspecies}>{timeStamp}/general_infos.txt
 		echo "nameA,"{nameA}>>{timeStamp}/general_infos.txt
 		y=$( cat {timeStamp}/nLoci.txt )
