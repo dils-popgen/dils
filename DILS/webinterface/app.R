@@ -1338,7 +1338,7 @@ server <- function(input, output, session = session) {
 	## get a time stamp when clicking on the "Run the ABC" button
 	time_stamp <- reactiveVal(0)
 
-	metaanalysis_file <- paste(time_stamp(), "_metaanalysis.txt", sep="")
+	metaanalysis_file <- "metaanalysis.txt"
 
 
 	observeEvent( input$runABC, {time_stamp(system('echo $(mktemp -d -t XXXXXXXXXX | cut -d"/" -f3)', intern=T))})
@@ -1401,8 +1401,6 @@ server <- function(input, output, session = session) {
 	#mode user 
 	#observeEvent( input$runABC, {DILS_command(paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j 50 --configfile ', time_stamp(), '.yaml', sep=''))})
 
-<<<<<<< HEAD
-=======
 	#mode dev
 		#observeEvent( input$runABC, {DILS_command(paste('singularity exec --bind /chemin/DILS:/mnt popgenomics.sif snakemake --snakefile /mnt/bin/Snakefile_2pop -p -j 6 --configfile ', time_stamp(), '.yaml', sep=''))})
 		observeEvent( input$runABC, {
@@ -1417,7 +1415,6 @@ server <- function(input, output, session = session) {
 		
 		output$DILS_command <- renderText({DILS_command()})
 
->>>>>>> d5e60d5fa1dc2f9cb40d047ba19a9e36e0973a08
 	## Check upload
 	output$check_upload_info <- renderUI({
 		if(input$check_upload == FALSE) {
