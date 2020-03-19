@@ -589,7 +589,7 @@ filtering <- fluidPage(
 
 populations <- fluidPage(
 	fluidRow(
-		boxPlus(title = h2("Number of populations/species"), height = NULL, width = 4, closable = FALSE, status = "primary", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
+		boxPlus(title = h2("Number of populations/species"), height = NULL, width = 6, closable = FALSE, status = "primary", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
 		#	### FOR THE MOMENT : ONLY ONE POSSIBLE CHOICE --> 2 POPULATIONS SPECIES.
 		#	### UNCOMMENT THE NEXT TWO LINES WHEN THE ANALYSES FOR 1 OR 4 POPULATIONS WILL BE READY
 			#	prettyRadioButtons("nspecies", label = h3("Number of gene pools"), shape = "round", status = "primary", fill = TRUE, inline = FALSE, animation = "pulse", bigger = TRUE,
@@ -602,16 +602,20 @@ populations <- fluidPage(
 			uiOutput("input_names_ui")
 		),
 		
-		boxPlus(title = h2("Presence of an outgroup"), height = NULL, width = 4, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
+		boxPlus(title = h2("Presence of an outgroup"), height = NULL, width = 6, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
 			prettyRadioButtons("presence_outgroup", label = NULL, shape = "round", status = "warning", fill = TRUE, inline = FALSE, animation = "pulse", bigger = TRUE,
 			choices = list("no" = "no", "yes" = "yes"), selected = "no"),
 			uiOutput("input_names_outgroup_ui"),
-			HTML('<h4>If <b>set to yes</b>: the used joint site frequency spectrum (jSFS) is <b>unfolded</b>, and the mutation rate for each locus is corrected by its divergence with the outgroup.</h4>'),
-			HTML('<h4>If <b>set to no</b>: the used jSFS is <b>folded</b>, and the mutation rate is the same for all loci.</h4>')
-		),
-		uiOutput("size_change")
+			HTML('<h4>If <b>set to yes</b>: the <b>j</b>oint <b>S</b>ite <b>F</b>requency <b>S</b>pectrum (jSFS) is <b>unfolded</b> (<u>if chosen to be used</u>), and the mutation rate for each locus is corrected by its divergence with the outgroup.</h4>'),
+			HTML('<h4>If <b>set to no</b>: the jSFS (<u>if used</u>) is <b>folded</b>, and the mutation rate is the same for all loci.</h4>')
+		)
 	),
 
+	fluidRow(
+		uiOutput("use_SFS"),
+		uiOutput("size_change")
+	),
+	
 	fluidRow(
 		box("", width = 12, solidHeader = TRUE, status = "info",
 			prettyCheckbox(inputId = "check_populations", shape = "round", value = FALSE,
@@ -1224,21 +1228,35 @@ server <- function(input, output, session = session) {
 		# nameOutgroup = 'NA' # CONFIG_YAML
 		}else{
 			selectInput("nameOutgroup", label = "name of the outgroup species", choices = list_species())
-		# nameOutgroup = 'name specified by the selectInput # CONFIG_YAML
+		}
+	})
+	
+	output$use_SFS <- renderUI({
+		nspecies = as.integer(input$nspecies)
+		if(nspecies==2){
+		boxPlus(title = h2("Use the jSFS as an additional set of summary-statistics?"), height = NULL, width = 6, closable = FALSE, status = "success", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
+			prettyRadioButtons("use_SFS", label = NULL, shape = "round", status='success',  fill = TRUE, inline = FALSE, animation = "pulse", bigger = TRUE, choices = list("no" = 0, "yes" = 1), selected = 0),
+			HTML('<h4>Only optional for two-populations models. The SFS is always used for single-population models.</h4>'),
+			HTML('<h4>If <b>set to yes</b>: the <b>j</b>oint <b>S</b>ite <b>F</b>requency <b>S</b>pectrum (jSFS) is used as summary statistics, where each bin (except singletons) is considered as a summary-statistic to be adjusted during the <b>model comparison</b> and the <b>estimation of parameters</b>.</h4>'),
+			HTML('<h4>If <b>set to no</b>: the jSFS as such is not considered as a set of summary-statistics (but still used for the goodness-of-fit test).</h4>')
+			)
+		}else{
+			return()
 		}
 	})
 
 	output$size_change <- renderUI({
 		nspecies = as.integer(input$nspecies)
 		if(nspecies==2){
-		boxPlus(title = h2("Size change over time"), height = NULL, width = 4, closable = FALSE, status = "danger", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
-			prettyRadioButtons("population_growth", label = h3("Assuming constant or variable population sizes"), shape = "round", status = "danger", fill = TRUE, inline = FALSE, animation = "pulse", bigger = TRUE,
+		boxPlus(title = h2("Allow changes in population size for each sister population/species?"), height = NULL, width = 6, closable = FALSE, status = "danger", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
+			prettyRadioButtons("population_growth", label = NULL, shape = "round", status = "danger", fill = TRUE, inline = FALSE, animation = "pulse", bigger = TRUE,
 			choices = list("constant" = "constant", "variable" = "variable"), selected = "constant"),
-			HTML('<h4>If <b>set to constant</b>: the sizes of the daughter populations differ from that of the ancestral population from the split, and then they remain constant.<h4>'),
-			HTML('<h4>If <b>set to variable</b>: daughter populations each have two distinct sizes, one at the origin of the population and one present since T<sub>dem</sub> generations.</h4>')
+			HTML('<h4>Only optional for two-populations models since the goal of single-population analysis is to test for such size variations over time.</h4>'),
+			HTML('<h4>If <b>set to constant</b>: only three population sizes with the ancestral (<i>N<sub>anc</sub></i>), current populations <b>A</b> (<i>N<sub>popA</sub></i>) and <b>B</b> (<i>N<sub>popB</sub></i>).<h4>'),
+			HTML('<h4>If <b>set to variable</b>: each of the two daughter populations has two distinct sizes corresponding at two epochs: one at the origin of the population (between <i>T<sub>split</sub></i> and <i>T<sub>dem</sub></i> generations ago) and a current one for the last <i>T<sub>dem</sub></i> generations. This makes a total of five population sizes. The values of <i>T<sub>dem</sub></i> are independent between populations.</h4>')
 			)
 		}else{
-			boxPlus(title = h2("Size change over time"), height = NULL, width = 4, closable = FALSE, status = "danger", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
+			boxPlus(title = h2("Size change over time"), height = NULL, width = 6, closable = FALSE, status = "danger", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
 				prettyRadioButtons("population_growth", label = h3("The ABC analysis will test for variation in population size"), shape = "round", status = "danger", fill = TRUE, inline = FALSE, animation = "pulse", bigger = TRUE,
 				choices = list("variable" = "variable"), selected = "variable"),
 				em(strong(h4('The ABC analysis will compute the probabilities of models of constant population size (a single Ne as parameter), of population expansion and of population contraction (3 parameters: current Ne, ancestral Ne, time of demographic change).'))),
@@ -1361,6 +1379,10 @@ server <- function(input, output, session = session) {
 		}
 		
 		write(paste("nameOutgroup:", nameOutgroup, sep=' '), file = yaml_name, append=T)
+		if(input$nspecies == 2){
+			write(paste("useSFS:", input$use_SFS, sep=' '), file = yaml_name, append=T)
+		}
+		
 		write(paste("config_yaml:", yaml_name, sep=' '), file = yaml_name, append=T)
 		write(paste("timeStamp:", time_stamp(), sep=' '), file = yaml_name, append=T)
 		if(input$nspecies == 2){
@@ -1760,8 +1782,8 @@ server <- function(input, output, session = session) {
 					hr(),
 					infoBox("Migration versus isolation", paste('best model = ', as.matrix(allData()[['hierarchical']][2,])[1], sep=''), paste('post. proba = ', round(as.numeric(as.matrix(allData()[['hierarchical']][3,])), 5)[1], sep=''), icon = icon("check"), color='navy'),
 					infoBox("IM versus SC", paste('best model = ', as.matrix(allData()[['hierarchical']][2,])[2], sep=''), paste('post. proba = ', round(as.numeric(as.matrix(allData()[['hierarchical']][3,])), 5)[2], sep=''), icon = icon("check"), color='navy'),
-					infoBox("N-homo versus N-hetero", paste('best model = ', as.matrix(allData()[['hierarchical']][2,])[3], sep=''), paste('post. proba = ', round(as.numeric(as.matrix(allData()[['hierarchical']][3,])), 5)[3], sep=''), icon = icon("check"), color='navy'),
-					infoBox("M-homo versus M-hetero", paste('best model = ', as.matrix(allData()[['hierarchical']][2,])[4], sep=''), paste('post. proba = ', round(as.numeric(as.matrix(allData()[['hierarchical']][3,])), 5)[4], sep=''), icon = icon("check"), color='navy')
+					infoBox("N-homo versus N-hetero", paste('best model = ', as.matrix(allData()[['hierarchical']][2,])[4], sep=''), paste('post. proba = ', round(as.numeric(as.matrix(allData()[['hierarchical']][3,])), 5)[4], sep=''), icon = icon("check"), color='navy'),
+					infoBox("M-homo versus M-hetero", paste('best model = ', as.matrix(allData()[['hierarchical']][2,])[3], sep=''), paste('post. proba = ', round(as.numeric(as.matrix(allData()[['hierarchical']][3,])), 5)[3], sep=''), icon = icon("check"), color='navy')
 				)
 			}
 		}

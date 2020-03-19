@@ -261,7 +261,7 @@ babar<-function(a,b,space=2,breaks="auto",AL=0.5,nameA="A",nameB="B",xl="",yl=""
 #}
 
 
-get_posterior<-function(nameA='spA', nameB='spB', nSubdir=10, sub_dir_sim='iteration_2', model='estimation_1', sub_dir_model=1, nPosterior=1000, figure=FALSE, timeStamp='SI_2N', path2observation='SI_2N/iteration_2/pod_0', do_nnet=T){
+get_posterior<-function(nameA='spA', nameB='spB', nSubdir=10, sub_dir_sim='iteration_2', model='estimation_1', sub_dir_model=1, nPosterior=1000, figure=FALSE, timeStamp='SI_2N', path2observation='SI_2N/iteration_2/pod_0', do_nnet=T, useSFS=0){
 	library(data.table)
 	options(digits=5)
 	###################
@@ -271,60 +271,26 @@ get_posterior<-function(nameA='spA', nameB='spB', nSubdir=10, sub_dir_sim='itera
 	coul = colorRampPalette(coul)
 
 	#obs_ss = read.table(paste(timeStamp, '/ABCstat_global.txt', sep=''), h=T)
-	obs_ss = read.table(paste(path2observation, '/ABCstat_global.txt', sep=''), h=T)
+	obs_ss_tmp = read.table(paste(path2observation, '/ABCstat_global.txt', sep=''), h=T)
+
+	undesired_stats = c('min', 'max', 'successive', 'pearson', 'ss_sf', 'ss_noSf', 'noSs_sf', 'noSs_noSf')
 
 	# remove stats
-	obs_ss = obs_ss[, -grep('min', colnames(obs_ss))]
-	obs_ss = obs_ss[, -grep('max', colnames(obs_ss))]
-	obs_ss = obs_ss[, -grep('successive', colnames(obs_ss))]
-	obs_ss = obs_ss[, -grep('pearson', colnames(obs_ss))]
-	obs_ss = obs_ss[, -grep('ss_sf', colnames(obs_ss))]
-	obs_ss = obs_ss[, -grep('ss_noSf', colnames(obs_ss))]
-	obs_ss = obs_ss[, -grep('noSs_sf', colnames(obs_ss))]
-	obs_ss = obs_ss[, -grep('noSs_noSf', colnames(obs_ss))]
+	for(stat in undesired_stats){
+		obs_ss_tmp = obs_ss_tmp[, -grep(stat, colnames(obs_ss_tmp))]
+	}
 	# end of remove stats
 
-	ss_obs = obs_ss
 
-
-	#sfs_obs = read.table(paste(timeStamp, '/ABCjsfs.txt', sep=''), h=T)
-	sfs_obs = read.table(paste(path2observation, '/ABCjsfs.txt', sep=''), h=T)
-	sfs_obs = sfs_obs[, -c(which(colnames(sfs_obs)=='fA0_fB0'), which(colnames(sfs_obs)=='fA1_fB0'), which(colnames(sfs_obs)=='fA0_fB1'))] # remove the singletons and the (0,0)
-	header_obs = colnames(sfs_obs) # get the names of the columns
-	header_obs = matrix(unlist(strsplit(header_obs, '_')), byrow=T, ncol=2) # converts the fAx_fBy format into a manipulable matrix
-
-	sfs_obs_A = matrix(NA, nrow=nrow(sfs_obs), ncol=length(unique(header_obs[,1]))) # will contain the observed SFS for A
-	sfs_obs_B = matrix(NA, nrow=nrow(sfs_obs), ncol=length(unique(header_obs[,2]))) # will contain the observed SFS for B
-
-       	cnt = 0; colnames_sfs_obs_A = NULL
-	for(i in unique(header_obs[,1])){
-		cnt = cnt + 1
-		colnames_sfs_obs_A = c(colnames_sfs_obs_A, i)
-
-		selected_col = which(header_obs[,1]==i)
-		if( length(selected_col) == 1 ){
-			sfs_obs_A[, cnt] = sapply(sfs_obs[, selected_col], FUN='sum')
-		}else{
-			sfs_obs_A[, cnt] = apply(sfs_obs[, selected_col], FUN='sum', MARGIN=1)
-		}
+	if(useSFS == 1){
+		sfs_obs = read.table(paste(path2observation, '/ABCjsfs.txt', sep=''), h=T)
+		sfs_obs = sfs_obs[, -c(which(colnames(sfs_obs)=='fA0_fB0'), which(colnames(sfs_obs)=='fA1_fB0'), which(colnames(sfs_obs)=='fA0_fB1'))] # remove the singletons and the (0,0)
+		ss_obs = cbind(obs_ss_tmp, sfs_obs)
+	}else{
+		ss_obs = obs_ss_tmp
 	}
-	colnames(sfs_obs_A) = colnames_sfs_obs_A
 
-	cnt = 0
-	colnames_sfs_obs_B = NULL
-	for(i in unique(header_obs[,2])){
-		cnt = cnt + 1
-		colnames_sfs_obs_B = c(colnames_sfs_obs_B, i)
-
-		selected_col = which(header_obs[,2]==i)
-		if( length(selected_col) == 1 ){
-			sfs_obs_B[, cnt] = sapply(sfs_obs[, selected_col], FUN='sum')
-		}else{
-			sfs_obs_B[, cnt] = apply(sfs_obs[, selected_col], FUN='sum', MARGIN=1)
-		}
-	}
-	colnames(sfs_obs_B) = colnames_sfs_obs_B
-
+	
 	# get the number of statistics, number of simulations and number of parameters
 	tmp = read.table(paste(timeStamp, '/', sub_dir_sim, '/', model, '_0/ABCstat.txt', sep=''), h=T)
 	nSimulations = nrow(tmp)
@@ -337,83 +303,59 @@ get_posterior<-function(nameA='spA', nameB='spB', nSubdir=10, sub_dir_sim='itera
 	params_sim_tmp = matrix(NA, nrow=nSimulations*nSubdir, ncol=nParams)
 	colnames(params_sim_tmp) = colnames(tmp)
 
-	sfs_sim_A_tmp = matrix(NA, nrow=nSimulations*nSubdir, ncol=ncol(sfs_obs_A)); colnames(sfs_sim_A_tmp) = colnames(sfs_obs_A)
-	sfs_sim_B_tmp = matrix(NA, nrow=nSimulations*nSubdir, ncol=ncol(sfs_obs_B)); colnames(sfs_sim_B_tmp) = colnames(sfs_obs_B)
-	
+	if(useSFS == 1){
+		sfs_sim_tmp = matrix(NA, nrow=nSimulations*nSubdir, ncol=ncol(sfs_obs)); colnames(sfs_sim_tmp) = colnames(sfs_obs)
+	}
+		
 	# read all these simulated datasets
 	ss_sim = list()
 	params_sim = list()
 
 	for(rep in seq(0, nSubdir-1, 1)){
 		# statistics
-		#tmp_ss = read.table(paste(timeStamp, '/', sub_dir_sim, '/', model, '_', rep, '/ABCstat.txt', sep=''), h=T)
 		tmp_ss = as.matrix(fread(paste(timeStamp, '/', sub_dir_sim, '/', model, '_', rep, '/ABCstat.txt', sep=''), h=T))
 		ss_sim_tmp[(rep*nSimulations+1):((rep+1)*nSimulations),] = as.matrix(tmp_ss)
 		
-		# sfs
-		sfs_sim = as.matrix(fread(paste(timeStamp, '/', sub_dir_sim, '/', model, '_', rep, '/ABCjsfs.txt', sep=''), h=T))
-		sfs_sim = sfs_sim[, -c(which(colnames(sfs_sim)=='fA0_fB0'), which(colnames(sfs_sim)=='fA1_fB0'), which(colnames(sfs_sim)=='fA0_fB1'))] # remove the singletons and the (0,0)
+		if(useSFS == 1){
+			# sfs
+			sfs_sim = as.matrix(fread(paste(timeStamp, '/', sub_dir_sim, '/', model, '_', rep, '/ABCjsfs.txt', sep=''), h=T))
+			sfs_sim = sfs_sim[, -c(which(colnames(sfs_sim)=='fA0_fB0'), which(colnames(sfs_sim)=='fA1_fB0'), which(colnames(sfs_sim)=='fA0_fB1'))] # remove the singletons and the (0,0)
 
-		sfs_sim_A = matrix(NA, nrow=nrow(sfs_sim), ncol=length(unique(header_obs[,1]))) # will contain the simulated SFS for A
-		sfs_sim_B = matrix(NA, nrow=nrow(sfs_sim), ncol=length(unique(header_obs[,2]))) # will contain the simulated SFS for B
-
-		cnt = 0; colnames_sfs_sim_A = NULL
-		for(i in unique(header_obs[,1])){
-			cnt = cnt + 1
-			colnames_sfs_sim_A = c(colnames_sfs_sim_A, i)
-
-			selected_col = which(header_obs[,1]==i)
-			if( length(selected_col) == 1 ){
-				sfs_sim_A[, cnt] = sapply(sfs_sim[, selected_col], FUN='sum')
-			}else{
-				sfs_sim_A[, cnt] = apply(sfs_sim[, selected_col], FUN='sum', MARGIN=1)
-			}
-
-			#sfs_sim_A[, cnt] = apply(sfs_sim[,which(header_obs[,1]==i)], FUN='sum', MARGIN=1)
+			sfs_sim_tmp[(rep*nSimulations+1):((rep+1)*nSimulations),] = sfs_sim
 		}
-		colnames(sfs_sim_A) = colnames_sfs_sim_A
-
-		cnt = 0
-		colnames_sfs_sim_B = NULL
-		for(i in unique(header_obs[,2])){
-			cnt = cnt + 1
-			colnames_sfs_sim_B = c(colnames_sfs_sim_B, i)
-
-
-			selected_col = which(header_obs[,2]==i)
-			if( length(selected_col) == 1 ){
-				sfs_sim_B[, cnt] = sapply(sfs_sim[, selected_col], FUN='sum')
-			}else{
-				sfs_sim_B[, cnt] = apply(sfs_sim[, selected_col], FUN='sum', MARGIN=1)
-			}
-
-			#sfs_sim_B[, cnt] = apply(sfs_sim[,which(header_obs[,2]==i)], FUN='sum', MARGIN=1)
-		}
-
-		colnames(sfs_sim_B) = colnames_sfs_sim_B
-		sfs_sim_A_tmp[(rep*nSimulations+1):((rep+1)*nSimulations),] = sfs_sim_A
-		sfs_sim_B_tmp[(rep*nSimulations+1):((rep+1)*nSimulations),] = sfs_sim_B
 
 		# params
-		#tmp_params = read.table(paste(timeStamp, '/', sub_dir_sim, '/', model, '_', rep, '/priorfile.txt', sep=''), h=T)
 		tmp_params = as.matrix(fread(paste(timeStamp, '/', sub_dir_sim, '/', model, '_', rep, '/priorfile.txt', sep=''), h=T))
 		params_sim_tmp[(rep*nSimulations+1):((rep+1)*nSimulations),] = tmp_params
 	}
 	
 	# remove stats
-	ss_sim_tmp = ss_sim_tmp[, -grep('min', colnames(ss_sim_tmp))]
-	ss_sim_tmp = ss_sim_tmp[, -grep('max', colnames(ss_sim_tmp))]
-	ss_sim_tmp = ss_sim_tmp[, -grep('successive', colnames(ss_sim_tmp))]
-	ss_sim_tmp = ss_sim_tmp[, -grep('pearson', colnames(ss_sim_tmp))]
-	ss_sim_tmp = ss_sim_tmp[, -grep('ss_sf', colnames(ss_sim_tmp))]
-	ss_sim_tmp = ss_sim_tmp[, -grep('ss_noSf', colnames(ss_sim_tmp))]
-	ss_sim_tmp = ss_sim_tmp[, -grep('noSs_sf', colnames(ss_sim_tmp))]
-	ss_sim_tmp = ss_sim_tmp[, -grep('noSs_noSf', colnames(ss_sim_tmp))]
+	for(stat in undesired_stats){
+		ss_sim_tmp = ss_sim_tmp[, -grep(stat, colnames(ss_sim_tmp))]
+	}
 	# end of remove stats
 	
 	# statistics
-	#ss_sim[[model]] = ss_sim_tmp  # without SFS
-	ss_sim[[model]] = cbind(ss_sim_tmp, sfs_sim_A_tmp, sfs_sim_B_tmp)  # with SFS
+	if(useSFS == 1){
+		ss_sim[[model]] = cbind(ss_sim_tmp, sfs_sim_tmp)  # with SFS
+	}else{
+		ss_sim[[model]] = ss_sim_tmp  # without SFS
+	}
+
+	# remove the uninformative statistics
+	toRemove = c(1)
+	for(i in 2:ncol(ss_sim[[model]])){
+		sd_tmp = sd(as.numeric(c(ss_obs[i], ss_sim[[model]][,i])))
+		
+		if(sd_tmp<0.00001){
+			toRemove = c(toRemove, i)
+		}
+	}
+	
+	toRemove = unique(toRemove)
+	
+	ss_obs = ss_obs[-toRemove]
+	ss_sim[[model]] = ss_sim[[model]][, -toRemove]
 
 	# params
 	params_sim[[model]] = params_sim_tmp
@@ -429,17 +371,13 @@ get_posterior<-function(nameA='spA', nameB='spB', nSubdir=10, sub_dir_sim='itera
 	
 	##############
 	# inferences
-	#ss = 2:40 # if remove only the 'min' and 'max' statistics
-	ss = 2:29 # if remove the 'min', 'max', successive', 'pearson', 'ss_sf', 'ss_noSf', 'noSs_sf' and 'noSs_noSf' statistics
-	
-	#target_rf = ss_obs[, ss] # without SFS
-	target_rf = cbind(ss_obs[, ss], sfs_obs_A, sfs_obs_B) # with SFS
+	target_rf = ss_obs 
 
 	# RANDOM FOREST	
 	library(abcrf)
-	sim_training = 1:5000 # in case of debug
+	sim_training = 1:10000 # in case of debug
 	params_model_rf = as.matrix(params_sim[[model]][sim_training,]) # in case of debug
-	stats_model_rf = ss_sim[[model]][sim_training, ss] # in case of debug
+	stats_model_rf = ss_sim[[model]][sim_training, ] # in case of debug
 
 	
 	
@@ -467,19 +405,16 @@ get_posterior<-function(nameA='spA', nameB='spB', nSubdir=10, sub_dir_sim='itera
 
 	colnames(estimates_RF) = header_RF	
 	write.table(estimates_RF, paste(timeStamp, '/', sub_dir_sim, '/posterior_RandomForest_', sub_dir_model, '.txt', sep=''), sep="\t", col.names=T, row.names=F, quote=F )
-#	write(paste(header_RF, collapse="\t"), paste(timeStamp, '/', sub_dir_sim, '/posterior_RandomForest_', sub_dir_model, '.txt', sep=''), append=F)
-#	write(paste(estimates_RF, collapse="\t"), paste(timeStamp, '/', sub_dir_sim, '/posterior_RandomForest_', sub_dir_model, '.txt', sep=''), append=T)
 		
 	res_tot = list()
 	
 	if(do_nnet == TRUE){	
 		# NEURAL NETWORK
 		library('nnet')
-	#	target = matrix(as.numeric(unlist(ss_obs[, ss])),nrow=1) # without SFS
-		target = matrix(as.numeric(unlist(cbind(ss_obs[, ss], sfs_obs_A, sfs_obs_B))),nrow=1) # with SFS
+		target = matrix(as.numeric(unlist(ss_obs)), nrow=1)
 		x = matrix(as.numeric(unlist(params_sim[[model]])), byrow=F, ncol=ncol(params_sim[[model]]))
-		#sumstat = matrix(as.numeric(unlist(ss_sim[[model]][,ss])), byrow=F, ncol=ncol(ss_sim[[model]][,ss])) # without SFS
-		sumstat = cbind(matrix(as.numeric(unlist(ss_sim[[model]][,ss])), byrow=F, ncol=ncol(ss_sim[[model]][,ss])), sfs_sim_A_tmp, sfs_sim_B_tmp) # with SFS
+
+		sumstat = matrix(as.numeric(unlist(ss_sim[[model]])), byrow=F, ncol=ncol(ss_sim[[model]]))
 		transf_obs = rep("logit", ncol(params_sim[[model]]))
 		
 		for(param_i in 1:ncol(x)){
@@ -493,7 +428,6 @@ get_posterior<-function(nameA='spA', nameB='spB', nSubdir=10, sub_dir_sim='itera
 		
 		bb = rbind(apply(x, MARGIN=2, FUN="min"), apply(x, MARGIN=2, FUN="max"))
 		
-		#res = abc_nnet_multivar(target=target, x=x, sumstat=sumstat, tol=nPosterior/nrow(x), rejmethod=F, noweight=F, transf=transf_obs, bb=bb, nb.nnet=2*ncol(x), size.nnet=2*ncol(x), trace=T)
 		res = abc_nnet_multivar(target=target, x=x, sumstat=sumstat, tol=nPosterior/nrow(x), rejmethod=F, noweight=F, transf=transf_obs, bb=bb, nb.nnet=10, size.nnet=10, trace=T)
 	
 		posterior = res$x

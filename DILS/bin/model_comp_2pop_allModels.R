@@ -41,11 +41,11 @@ for(i in commandArgs()){
 	if(tmp[[1]][1] == 'nSubdir'){ nSubdir = as.integer(tmp[[1]][2]) } # number of subdirectories where simulations were ran
 	if(tmp[[1]][1] == 'ncores'){ ncores = as.integer(tmp[[1]][2]) } # number of cores for the random forest
 	if(tmp[[1]][1] == 'ntree'){ ntree = as.integer(tmp[[1]][2]) }
-	if(tmp[[1]][1] == 'outgroup'){ outgroup = as.integer(tmp[[1]][2]) } # 0: no outgroup, no SFS used. 1: outgroup, SFS used
 	if(tmp[[1]][1] == 'population_growth'){ population_growth = tmp[[1]][2] } # constant; variable
 	if(tmp[[1]][1] == 'modeBarrier'){ modeBarrier = tmp[[1]][2] } # beta; bimodal
 	if(tmp[[1]][1] == 'binpath'){ binpath = tmp[[1]][2] } # path to the bin directory
 	if(tmp[[1]][1] == 'posterior2use'){ posterior2use = tmp[[1]][2] } # path to the posterior file used for the locus specific model comp
+	if(tmp[[1]][1] == 'useSFS'){ useSFS = as.integer(tmp[[1]][2]) } # 0: no SFS used. 1: SFS used
 }
 
 outfile = paste(timeStamp, '/', sub_dir_sim, '/report_', nameA, '_', nameB, '.txt', sep='')
@@ -117,7 +117,11 @@ for(i in 2:ncol(all_models_sim)){
 		ss_2_remove = c(ss_2_remove, i)
 	}
 }
-ss_2_remove = c(ss_2_remove, grep('fA', colnames(all_models_sim)))
+
+if(useSFS==0){ # if don't use SFS, then remove the statistics
+	ss_2_remove = c(ss_2_remove, grep('fA', colnames(all_models_sim)))
+}
+
 ss_2_remove = unique(ss_2_remove)
 
 print(colnames(all_models_sim)[-ss_2_remove])

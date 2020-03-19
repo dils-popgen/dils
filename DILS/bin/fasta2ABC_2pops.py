@@ -32,7 +32,7 @@ from math import ceil
 import random
 
 # check the arguments
-if len(sys.argv) != 15:
+if len(sys.argv) != 14:
 	print("\n\tfasta2ABC_2pops.py produces: bpfile (for simulations) and summary statistics (for inferences)")
 	print("\n\033[1;33m\tExample: ./fasta2ABC_2pops.py all_loci.fasta flo mal coding 30 0.1 10 100000 0.00000002 1\033[0m\n")
 	print("\t\targ1 =\tname of the fasta file containing all of the sequences")
@@ -48,11 +48,10 @@ if len(sys.argv) != 15:
 	print("\t\targ11 =\tmutation rate by bp and by generation. example: 0.00000002")
 	print("\t\targ12 =\tratio of the recombination rate over mutation. example: 1")
 	print("\t\targ13 =\tpathway to the binary files of DILS: /shared/mfs/data/home/croux/softwares/ABConline/bin")
-	print("\t\targ14 =\tthreshold_sim: number of arbitrary considered loci in the dataset")
-	if(len(sys.argv)<15):
-		sys.exit("\n\033[1;31m ERROR in fasta2ABC_2pops.py: 14 arguments are required: {0} missing\033[0m\n".format(15-len(sys.argv)))
-	if(len(sys.argv)>15):
-		sys.exit("\n\033[1;31m ERROR in fasta2ABC_2pops.py: 14 arguments are required: {0} too much\033[0m\n".format(len(sys.argv)-15))
+	if(len(sys.argv)<14):
+		sys.exit("\n\033[1;31m ERROR in fasta2ABC_2pops.py: 13 arguments are required: {0} missing\033[0m\n".format(14-len(sys.argv)))
+	if(len(sys.argv)>14):
+		sys.exit("\n\033[1;31m ERROR in fasta2ABC_2pops.py: 13 arguments are required: {0} too much\033[0m\n".format(len(sys.argv)-14))
 
 fileName = sys.argv[1] # example: all_loci.fasta
 timeStamp = sys.argv[2] # example: timeStamp used as directory for the project
@@ -67,7 +66,6 @@ Nref = int(float(sys.argv[10])) # size of the reference population, arbitrary fi
 mu = float(sys.argv[11]) # mutation rate by bp and by generation. example: 0.00000002
 rho_over_theta = float(sys.argv[12]) # ratio of the recombination rate over mutation. example: 1
 binpath = sys.argv[13] # pathway to the directory of DILS (fastABC / ABConline) containing all executable files
-threshold_sim = int(sys.argv[14]) # number of arbitrary considered loci in the dataset
 
 test = os.path.isfile(fileName)
 if test == False:
@@ -823,7 +821,6 @@ if nameOut == 'NA':
 	outgroup_present = 0
 else:
 	outgroup_present = 1
-#commande = 'cat {0}/{1}_{2}.ms | pypy {4}/mscalc_2pop_observedDataset_SFS.py {0} {3} {5}'.format(timeStamp, nameA, nameB, outgroup_present, binpath, threshold_sim)
 commande = 'cat {0}/{1}_{2}.ms | pypy {4}/mscalc_2pop_observedDataset_SFS.py {0} {3}'.format(timeStamp, nameA, nameB, outgroup_present, binpath)
 #print(commande)
 os.system(commande)
