@@ -24,14 +24,9 @@
 #################################################################################################################################
 #################################################################################################################################
 
-<<<<<<< HEAD
-python  'pypy'
-=======
-#python = 'python2'
 python = 'pypy'
 
 #binpath = "/shared/mfs/data/home/croux/softwares/DILS/bin"
->>>>>>> d5e60d5fa1dc2f9cb40d047ba19a9e36e0973a08
 binpath = "/tools/bin"
 
 nmultilocus = 1000 # number of multilocus simulations per iteration (500)
@@ -134,11 +129,8 @@ rule fasta2ABC_1pop:
 	shell:
 		"""
 		x=$(date)
-<<<<<<< HEAD
 		{python} {binpath}/fasta2ABC_1pop.py {infile} {timeStamp} {params.nameA} {params.nameOutgroup} {params.region} {params.Lmin} {params.max_N_tolerated} {params.nMin} {params.mu} {params.rho_over_theta} {binpath}
-=======
-		pypy {binpath}/fasta2ABC_1pop.py {infile} {timeStamp} {params.nameA} {params.nameOutgroup} {params.region} {params.Lmin} {params.max_N_tolerated} {params.nMin} {params.mu} {params.rho_over_theta} {binpath}
->>>>>>> d5e60d5fa1dc2f9cb40d047ba19a9e36e0973a08
+#		pypy {binpath}/fasta2ABC_1pop.py {infile} {timeStamp} {params.nameA} {params.nameOutgroup} {params.region} {params.Lmin} {params.max_N_tolerated} {params.nMin} {params.mu} {params.rho_over_theta} {binpath}
 		echo "nSpecies,"{nspecies}>{timeStamp}/general_infos.txt
 		echo "nameA,"{nameA}>>{timeStamp}/general_infos.txt
 		y=$( cat {timeStamp}/nLoci.txt )

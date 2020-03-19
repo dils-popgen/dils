@@ -1355,10 +1355,6 @@ server <- function(input, output, session = session) {
 	
 	## get a time stamp when clicking on the "Run the ABC" button
 	time_stamp <- reactiveVal(0)
-
-	metaanalysis_file <- "metaanalysis.txt"
-
-
 	observeEvent( input$runABC, {time_stamp(system('echo $(mktemp -d -t XXXXXXXXXX | cut -d"/" -f3)', intern=T))})
 	output$time_stamp <- renderText({time_stamp()})
 
@@ -1505,7 +1501,7 @@ server <- function(input, output, session = session) {
 			gof_sfs = read.table(paste(rootName, "/gof/gof_sfs.txt", sep=''), h=T)
 			gof2_sfs = read.table(paste(rootName, "/gof_2/gof_sfs.txt", sep=''), h=T)
 			
-			meta = read.table(metaanalysis_file, sep='\t', h=T)
+			meta = read.table('/tools/webinterface/metaanalysis.txt', sep='\t', h=T)
 
 			# if 2 species
 			if(users_infos[1,2]==2){
@@ -3677,7 +3673,7 @@ server <- function(input, output, session = session) {
 				piB_user = ABCstat$piB_avg
 				divergence_user = ABCstat$netdivAB_avg
 
-				res = read.table(metaanalysis_file, sep='\t', h=T)
+				res = read.table('/tools/webinterface/metaanalysis.txt', sep='\t', h=T)
 				
 				if(sum(rootName%in%res$yaml) == 0){ # if the rootName is absent from the metaanalysis
 					
@@ -3686,7 +3682,7 @@ server <- function(input, output, session = session) {
 			
 					obs = data.frame(yaml=a[1], mail_address=a[2], speciesA=a[3], speciesB=a[4], bestModel=a[5], probaMigration=a[6], probaMigHetero=a[7], status=a[8], piA=a[9], piB=a[10], netDivergence=a[11])
 					res = rbind(res, obs)
-					write.table(res, metaanalysis_file, col.names=colnames, row.names=F, sep='\t', quote=F)
+					write.table(res, '/tools/webinterface/metaanalysis.txt', col.names=colnames, row.names=F, sep='\t', quote=F)
 				}
 			}
 		}
@@ -3698,11 +3694,11 @@ server <- function(input, output, session = session) {
 			if (is.null(fileName)){
 			}else{	
 				rootName = strsplit(fileName$name, '.', fixed=T)[[1]][1]
-				res = read.table(metaanalysis_file, sep='\t', h=T)
+				res = read.table('/tools/webinterface/metaanalysis.txt', sep='\t', h=T)
 				toRemove = which(res[,1] == rootName)
 				
 				colnames = c('yaml', 'mail_address', 'speciesA', 'speciesB', 'bestModel', 'probaMigration', 'probaMigHetero', 'status', 'piA', 'piB', 'netDivergence')
-				write.table(res[-toRemove,], metaanalysis_file, col.names=colnames, row.names=F, sep='\t', quote=F)
+				write.table(res[-toRemove,], '/tools/webinterface/metaanalysis.txt', col.names=colnames, row.names=F, sep='\t', quote=F)
 			}
 		}
 	)
@@ -3710,7 +3706,7 @@ server <- function(input, output, session = session) {
 	output$plot_greyzone <- renderPlotly({
 		# GREYZONE PART
 		# metaanalayse
-		meta = read.table(metaanalysis_file, sep='\t', h=T)
+		meta = read.table('/tools/webinterface/metaanalysis.txt', sep='\t', h=T)
 		
 		# popphyl
 		x = read.table("/tools/webinterface/popPhyl.txt", h=T)
