@@ -822,7 +822,7 @@ if nameOut == 'NA':
 else:
 	outgroup_present = 1
 commande = 'cat {0}/{1}_{2}.ms | pypy {4}/mscalc_2pop_observedDataset_SFS.py {0} {3}'.format(timeStamp, nameA, nameB, outgroup_present, binpath)
-#print(commande)
+print(commande)
 os.system(commande)
 
 # remove the useless ms file

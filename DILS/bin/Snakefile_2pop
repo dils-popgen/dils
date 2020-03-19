@@ -25,37 +25,35 @@
 #################################################################################################################################
 
 # python
-#python = 'python2'
-python = 'pypy'
+python = 'python2'
 
 # links to the codes
 binpath = "/tools/bin"
 
 # general property
 nmultilocus = 1000 # number of multilocus simulations per iteration (500)
-threshold_sim = 20 # number of arbitrary considered loci in the dataset
 
 # model comparison
-nCPU_R = 20 # number of CPUs for the model comp for the model forest R functions
-ntree = 1000 # number of tree for the random forest (RF) model comparison
+nCPU_R = 8 # number of CPUs for the model comp for the model forest R functions (8)
+ntree = 1000 # number of tree for the random forest (RF) model comparison (1000)
 nIterations_model_comp = 10 # number of subdirectories for the simulations used in the RF model comparison
 ITERATIONS_MODEL_COMP = range(nIterations_model_comp)
 #MODELS_COMP = ['PAN_1N', 'PAN_2N', 'SC_1M_1N', 'SC_1M_2N', 'SC_2M_1N', 'SC_2M_2N', 'AM_1M_1N', 'AM_1M_2N', 'AM_2M_1N', 'AM_2M_2N', 'IM_1M_1N', 'IM_1M_2N', 'IM_2M_1N', 'IM_2M_2N', 'SI_1N', 'SI_2N']
 MODELS_COMP = ['SC_1M_1N', 'SC_1M_2N', 'SC_2M_1N', 'SC_2M_2N', 'AM_1M_1N', 'AM_1M_2N', 'AM_2M_1N', 'AM_2M_2N', 'IM_1M_1N', 'IM_1M_2N', 'IM_2M_1N', 'IM_2M_2N', 'SI_1N', 'SI_2N']
 
 # first and second estimation of parameters
-nIterations_gof = 50 # number of subdirectories for the simulations used in the nnet param estimates (200)
-nIterations_estim_1_3 = 500 # number of subdirectories for the simulations used in the nnet param estimates (2000)
+nIterations_gof = 10 # number of subdirectories for the simulations used in the nnet param estimates (10)
+nIterations_estim_1_3 = 500 # number of subdirectories for the simulations used in the nnet param estimates (500)
 ITERATIONS_ESTIMATES_1_3 = range(nIterations_estim_1_3)
 ITERATIONS_GOF = range(nIterations_gof)
-nPosterior1 = 10000
-nPosterior3 = 10000
+nPosterior1 = 5000 # (5000)
+nPosterior3 = 5000 # (5000)
 
 # second estimation of parameters
-nIterations_estim_2 = 250 # number of subdirectories for the simulations used in the nnet param estimates (2000)
+nIterations_estim_2 = 250 # number of subdirectories for the simulations used in the nnet param estimates (250)
 ITERATIONS_ESTIMATES_2 = range(nIterations_estim_2)
 ITERATIONS_GOF_2 = range(nIterations_gof)
-nPosterior2 = 2000
+nPosterior2 = 2000 # (2000)
 
 # informations from the config.yaml file
 mail_address = config['mail_address']
@@ -69,6 +67,7 @@ if nameOutgroup=='NA':
 	outgroup=0
 else:
 	outgroup=1
+useSFS = config['useSFS']
 config_yaml = config['config_yaml']
 timeStamp = config['timeStamp']
 population_growth = config['population_growth']
@@ -177,7 +176,7 @@ rule fasta2ABC_2pops:
 #		module load pandoc/2.7.2;
 #		module load pypy
 		x=$(date)
-		pypy {binpath}/fasta2ABC_2pops.py {infile} {timeStamp} {params.nameA} {params.nameB} {params.nameOutgroup} {params.region} {params.Lmin} {params.max_N_tolerated} {params.nMin} {params.Nref} {params.mu} {params.rho_over_theta} {binpath} {threshold_sim}
+		pypy {binpath}/fasta2ABC_2pops.py {infile} {timeStamp} {params.nameA} {params.nameB} {params.nameOutgroup} {params.region} {params.Lmin} {params.max_N_tolerated} {params.nMin} {params.Nref} {params.mu} {params.rho_over_theta} {binpath}
 		echo "nSpecies,"{nspecies}>{timeStamp}/general_infos.txt
 		echo "nameA,"{nameA}>>{timeStamp}/general_infos.txt
 		echo "nameB,"{nameB}>>{timeStamp}/general_infos.txt
@@ -246,7 +245,7 @@ rule modelComparison:
 		"""
 #		module load conda
 #		source activate R_env
-		Rscript {binpath}/model_comp_2pop_allModels.R nameA={nameA} nameB={nameB} timeStamp={timeStamp} nMin={nMin} sub_dir_sim=modelComp nSubdir={nIterations_model_comp} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} population_growth={population_growth} modeBarrier={modeBarrier} binpath={binpath}
+		Rscript {binpath}/model_comp_2pop_allModels.R nameA={nameA} nameB={nameB} timeStamp={timeStamp} nMin={nMin} sub_dir_sim=modelComp nSubdir={nIterations_model_comp} ntree={ntree} ncores={nCPU_R} useSFS={useSFS} population_growth={population_growth} modeBarrier={modeBarrier} binpath={binpath}
 		"""
 
 # First round of estimation of the parameters of the best model (exploration of starting values)
@@ -284,7 +283,7 @@ rule estimation_best_model:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		Rscript {binpath}/estimates_2pop_best.R Nref={Nref} nameA={nameA} nameB={nameB} nMin={nMin} sub_dir_sim=best_model nSubdir={nIterations_estim_1_3} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} path2observation={timeStamp}
+		Rscript {binpath}/estimates_2pop_best.R Nref={Nref} nameA={nameA} nameB={nameB} nMin={nMin} sub_dir_sim=best_model nSubdir={nIterations_estim_1_3} ntree={ntree} ncores={nCPU_R} useSFS={useSFS} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} path2observation={timeStamp}
 		"""
 
 # First optimization
@@ -315,7 +314,7 @@ rule estimation_best_model_2:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		Rscript {binpath}/estimates_2pop_best.R Nref={Nref} nameA={nameA} nameB={nameB} nMin={nMin} sub_dir_sim=best_model_2 nSubdir={nIterations_estim_2} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} path2observation={timeStamp}
+		Rscript {binpath}/estimates_2pop_best.R Nref={Nref} nameA={nameA} nameB={nameB} nMin={nMin} sub_dir_sim=best_model_2 nSubdir={nIterations_estim_2} ntree={ntree} ncores={nCPU_R} useSFS={useSFS} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} path2observation={timeStamp}
 		"""
 
 rule simulation_best_model_3:
@@ -346,7 +345,7 @@ rule estimation_best_model_3:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		Rscript {binpath}/estimates_2pop_best.R Nref={Nref} nameA={nameA} nameB={nameB} nMin={nMin} sub_dir_sim=best_model_3 nSubdir={nIterations_estim_1_3} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior3} binpath={binpath} path2observation={timeStamp}
+		Rscript {binpath}/estimates_2pop_best.R Nref={Nref} nameA={nameA} nameB={nameB} nMin={nMin} sub_dir_sim=best_model_3 nSubdir={nIterations_estim_1_3} ntree={ntree} ncores={nCPU_R} useSFS={useSFS} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior3} binpath={binpath} path2observation={timeStamp}
 		"""
 
 # second optimization
@@ -377,7 +376,7 @@ rule estimation_best_model_4:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		Rscript {binpath}/estimates_2pop_best.R Nref={Nref} nameA={nameA} nameB={nameB} nMin={nMin} sub_dir_sim=best_model_4 nSubdir={nIterations_estim_2} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} path2observation={timeStamp}
+		Rscript {binpath}/estimates_2pop_best.R Nref={Nref} nameA={nameA} nameB={nameB} nMin={nMin} sub_dir_sim=best_model_4 nSubdir={nIterations_estim_2} ntree={ntree} ncores={nCPU_R} useSFS={useSFS} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior2} binpath={binpath} path2observation={timeStamp}
 		"""
 
 rule simulation_best_model_5:
@@ -409,7 +408,7 @@ rule estimation_best_model_5:
 	shell:
 		"""
 		best_model=$(cat {input.best})
-		Rscript {binpath}/estimates_2pop_best.R Nref={Nref} nameA={nameA} nameB={nameB} nMin={nMin} sub_dir_sim=best_model_5 nSubdir={nIterations_estim_1_3} ntree={ntree} ncores={nCPU_R} outgroup={outgroup} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior3} binpath={binpath} path2observation={timeStamp}
+		Rscript {binpath}/estimates_2pop_best.R Nref={Nref} nameA={nameA} nameB={nameB} nMin={nMin} sub_dir_sim=best_model_5 nSubdir={nIterations_estim_1_3} ntree={ntree} ncores={nCPU_R} useSFS={useSFS} bestModel=${{best_model}} timeStamp={timeStamp} nPosterior={nPosterior3} binpath={binpath} path2observation={timeStamp}
 		"""
 
 # Gof

@@ -29,15 +29,15 @@ python = 'pypy'
 #binpath = "/shared/mfs/data/home/croux/softwares/DILS/bin"
 binpath = "/tools/bin"
 
-nmultilocus = 1000 # number of multilocus simulations per iteration (500)
-nIterations_model_comp = 10 # number of subdirectories for the simulations used in the RF model comparison
-nIterations_estim = 500 # number of subdirectories for the simulations used in the nnet param estimates (1999)
-nIterations_gof = 20 # number of subdirectories for the simulations used in the nnet param estimates (200)
-nCPU_R = 8 # number of CPUs for the model comp for the model forest R functions
-ntree = 2000 # number of tree for the random forest (RF) model comparison
-nPosterior1 = 5000
-nPosterior2 = 5000
-nPosterior3 = 5000
+nmultilocus = 1000 # number of multilocus simulations per iteration (1000)
+nIterations_model_comp = 10 # number of subdirectories for the simulations used in the RF model comparison (10)
+nIterations_estim = 500 # number of subdirectories for the simulations used in the nnet param estimates (2000)
+nIterations_gof = 10 # number of subdirectories for the simulations used in the nnet param estimates (20)
+nCPU_R = 8 # number of CPUs for the model comp for the model forest R functions (20)
+ntree = 1000 # number of tree for the random forest (RF) model comparison (2000)
+nPosterior1 = 5000 # (5000)
+nPosterior2 = 5000 # (5000)
+nPosterior3 = 5000 # (5000)
 
 #MODELS_COMP = ['Constant_1N', 'Constant_2N', 'Discrete_1N', 'Discrete_2N', 'Expo_1N', 'Expo_2N']
 MODELS_COMP = ['Constant_1N', 'Constant_2N', 'Expansion_1N', 'Expansion_2N', 'Contraction_1N', 'Contraction_2N']

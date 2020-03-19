@@ -32,6 +32,8 @@ for(tmp in commandArgs()){
 	if(tmp[[1]][1] == 'host'){ host = as.character(tmp[[1]][2]) }
 }
 
+nCPU_server = 400 # maximum number of simultaneously running jobs (400 on IFB's cluster)
+
 #options('shiny.port'=as.numeric(commandArgs()[2]), 'shiny.host'=commandArgs()[3])
 
 library(shiny)
@@ -1414,7 +1416,7 @@ server <- function(input, output, session = session) {
 	
 	## snakemake command
 	DILS_command <- reactiveVal(0)
-	#observeEvent( input$runABC, {DILS_command(paste('snakemake -p -j 999 --snakefile ../2pops/Snakefile --configfile config_', time_stamp(), '.yaml --cluster-config ../cluster.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}"', sep=''))})
+	#observeEvent( input$runABC, {DILS_command(paste('snakemake -p -j 400 --snakefile ../2pops/Snakefile --configfile config_', time_stamp(), '.yaml --cluster-config ../cluster.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}"', sep=''))})
 
 	#mode user 
 	#observeEvent( input$runABC, {DILS_command(paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j 50 --configfile ', time_stamp(), '.yaml', sep=''))})
@@ -1423,11 +1425,11 @@ server <- function(input, output, session = session) {
 		#observeEvent( input$runABC, {DILS_command(paste('singularity exec --bind /chemin/DILS:/mnt popgenomics.sif snakemake --snakefile /mnt/bin/Snakefile_2pop -p -j 6 --configfile ', time_stamp(), '.yaml', sep=''))})
 		observeEvent( input$runABC, {
 			if(input$nspecies==1){
-				DILS_command(system(paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j 400 --configfile ', time_stamp(), '.yaml &', sep='')))
+				DILS_command(system(paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='')))
 			}
 			
 			if(input$nspecies==2){
-				DILS_command(system(paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j 400 --configfile ', time_stamp(), '.yaml &', sep='')))
+				DILS_command(system(paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='')))
 			}
 		})
 		
