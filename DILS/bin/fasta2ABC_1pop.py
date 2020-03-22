@@ -761,8 +761,8 @@ else:
 	outgroup_present = 1
 #commande = 'cat {0}/{1}.ms | mscalc_1pop_observedDataset.py {0} {2}'.format(timeStamp, nameA, outgroup_present)
 commande = 'cat {0}/{1}.ms | pypy {3}/mscalc_1pop_observedDataset_SFS.py {0} {2}'.format(timeStamp, nameA, outgroup_present, binpath)
-#print(commande)
-os.system(commande)
+print(commande)
+#os.system(commande)
 
 # remove the useless ms file
 commande = 'rm {0}/{1}.ms'.format(timeStamp, nameA)

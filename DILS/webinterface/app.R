@@ -26,6 +26,8 @@
 #################################################################################################################################
 #################################################################################################################################
 
+options(encoding="UTF-8")
+
 for(tmp in commandArgs()){
 	tmp = strsplit(tmp, '=')
 	if(tmp[[1]][1] == 'port'){ port = as.numeric(tmp[[1]][2]) }
@@ -598,7 +600,7 @@ populations <- fluidPage(
 			#	choices = list("One gene pool" = 1, "Two gene pools" = 2, "Four gene pools" = 4), selected = 2),
 
 			prettyRadioButtons("nspecies", label = NULL, shape = "round", status = "primary", fill = TRUE, inline = FALSE, animation = "pulse", bigger = TRUE,
-			choices = list("One gene pool" = 1, "Two gene pools" = 2), selected = 2),
+			choices = list("One gene pool" = 1, "Two gene pools" = 2), selected = 1),
 			HTML('<h4>If <b>set to one</b>: a model for a single panmictic population is evaluated.<br>If <b>set to two</b>: a model of divergence between two populations/species is evaluated.<br></h4>'),
 			em(strong(h4('Analysis for 4 populations/species will be soon available'))),
 			uiOutput("input_names_ui")
@@ -735,15 +737,17 @@ information <- fluidPage(
 			#box(title = h2("Citations"), width = 12, solidHeader = TRUE, background = NULL, status = "primary",
 			boxPlus(title = h2("Citations"), width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
 				h3("Please, in case of publication of a study using DILS, do not forget to quote the following references:"),
-				h3(code('Csilléry, Katalin, Olivier François, and Michael GB Blum. "abc: an R package for approximate Bayesian computation (ABC)." Methods in ecology and evolution 3.3 (2012): 475-479.')),
-				h3(code('Pudlo, Pierre, Jean-Michel Marin, Arnaud Estoup, Jean-Marie Cornuet, Mathieu Gautier, and Christian P. Robert. "Reliable ABC model choice via random forests." Bioinformatics 32, no. 6 (2015): 859-866.')),
-				h3(code('Roux, Camille, Christelle Fraisse, Jonathan Romiguier, Yoann Anciaux, Nicolas Galtier, and Nicolas Bierne. "Shedding light on the grey zone of speciation along a continuum of genomic divergence." PLoS biology 14, no. 12 (2016): e2000234.'))
+				HTML('<h3><font color="#1e2b37"><i>Csill&eacute;ry Katalin, Olivier Fran&ccedil;ois, and Michael GB Blum. "abc: an R package for approximate Bayesian computation (ABC)." Methods in ecology and evolution 3.3 (2012): 475-479.</i></font></h3>'),
+				HTML('<h3><font color="#1e2b37"><i>Pudlo Pierre, Jean-Michel Marin, Arnaud Estoup, Jean-Marie Cornuet, Mathieu Gautier, and Christian P. Robert. "Reliable ABC model choice via random forests." Bioinformatics 32, no. 6 (2015): 859-866.</i></h3>'),
+				HTML('<h3><font color="#1e2b37"><i>Roux Camille, Christelle Fra&iuml;sse, Jonathan Romiguier, Yoann Anciaux, Nicolas Galtier, and Nicolas Bierne. "Shedding light on the grey zone of speciation along a continuum of genomic divergence." PLoS biology 14, no. 12 (2016): e2000234.</i></font></h3>')
 			),
 			
 			#box(title = h2("Acknowledgment"), width = 12, solidHeader = TRUE, background = NULL, status = "primary",
 			boxPlus(title = h2("Acknowledgment"), width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
-				h3("Please, if you use this online version of DILS, do not forget to recognize and acknowledge the free provision of calculation cores by France Bioinformatique"),
-				h3(code("The demographic inferences were conducted on the IFB Core Cluster which is part of the National Network of Compute Resources (NNCR) of the", a(span(strong("Institut Français de Bioinformatique (IFB)."), style = "color:teal"), href="https://www.france-bioinformatique.fr/fr", target="_blank")))
+				HTML("<h3>Please, if you use this online version of DILS, do not forget to recognize and acknowledge the free provision of calculation cores by France Bioinformatique by using for instance:</h3>"),
+				HTML('<h3><i>The demographic inferences were conducted on the IFB Core Cluster which is part of the National Network of Compute Resources (NNCR) of the <a href="https://www.france-bioinformatique.fr/fr" target="_blank"><font color="#c7f464"><b>Institut Fran&ccedil;ais de Bioinformatique (IFB)</b></font></a></i></h3>')
+
+
 			),
 			
 			#box(title = h2("Partners"), width = 12, solidHeader = TRUE, background = NULL, status = "primary",
@@ -1419,24 +1423,24 @@ server <- function(input, output, session = session) {
 	
 	## snakemake command
 	DILS_command <- reactiveVal(0)
-	#observeEvent( input$runABC, {DILS_command(paste('snakemake -p -j 400 --snakefile ../2pops/Snakefile --configfile config_', time_stamp(), '.yaml --cluster-config ../cluster.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}"', sep=''))})
 
-	#mode user 
-	#observeEvent( input$runABC, {DILS_command(paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j 50 --configfile ', time_stamp(), '.yaml', sep=''))})
-
-	#mode dev
-		#observeEvent( input$runABC, {DILS_command(paste('singularity exec --bind /chemin/DILS:/mnt popgenomics.sif snakemake --snakefile /mnt/bin/Snakefile_2pop -p -j 6 --configfile ', time_stamp(), '.yaml', sep=''))})
-		observeEvent( input$runABC, {
-			if(input$nspecies==1){
-				DILS_command(system(paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='')))
-			}
-			
-			if(input$nspecies==2){
-				DILS_command(system(paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='')))
-			}
-		})
+	observeEvent( input$runABC, {
+		if(input$nspecies==1){
+			commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
+#				commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_1pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
+			cat(commande)
+			DILS_command(system(commande))
+		}
 		
-		output$DILS_command <- renderText({DILS_command()})
+		if(input$nspecies==2){
+			commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
+#				commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_2pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
+			cat(commande)
+			DILS_command(system(commande))
+		}
+	})
+	
+	output$DILS_command <- renderText({DILS_command()})
 
 	## Check upload
 	output$check_upload_info <- renderUI({
