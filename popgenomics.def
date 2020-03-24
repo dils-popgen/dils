@@ -40,36 +40,38 @@ From: ubuntu:18.04
 	conda create -n snakemake snakemake=5.3.0
 	conda create -n latex -c conda-forge texlive-core 
 
+
+	# R env not needed since webinterface is externalized from singularity image
 #R
-	conda create -n R r
+#	conda create -n R r
 
-	conda install -n R -c conda-forge r-shiny=1.4.0
-	conda install -n R -c conda-forge r-shinythemes
-	conda install -n R -c conda-forge r-shinydashboard 
-	conda install -n R -c conda-forge r-shinydashboardplus 
-	conda install -n R -c conda-forge r-shinyjs 
-	conda install -n R -c conda-forge r-dt 
-	conda install -n R -c conda-forge r-shinywidgets 
-	conda install -n R -c conda-forge r-shinycssloaders 
-	conda install -n R -c conda-forge r-devtools 
-	Rscript -e 'library(devtools); install_github("nik01010/dashboardthemes")'
-	conda install -n R -c conda-forge r-shinyhelper 
-	conda install -n R -c conda-forge r-tidyr 
-	conda install -n R -c conda-forge r-rcolorbrewer 
-	conda install -n R -c r r-yaml 
+#	conda install -n R -c conda-forge r-shiny=1.4.0
+#	conda install -n R -c conda-forge r-shinycssloaders 
+#	conda install -n R -c conda-forge r-shinythemes
+#	conda install -n R -c conda-forge r-shinydashboard 
+#	conda install -n R -c conda-forge r-shinydashboardplus 
+#	conda install -n R -c conda-forge r-shinyjs 
+#	conda install -n R -c conda-forge r-dt 
+#	conda install -n R -c conda-forge r-shinywidgets 
+#	conda install -n R -c conda-forge r-devtools 
+#	Rscript -e 'library(devtools); install_github("nik01010/dashboardthemes")'
+#	conda install -n R -c conda-forge r-shinyhelper 
+#	conda install -n R -c conda-forge r-tidyr 
+#	conda install -n R -c conda-forge r-rcolorbrewer 
+#	conda install -n R -c r r-yaml 
 
-	conda install -n R -c r r-data.table
-	conda install -n R -c conda-forge r-factominer 
-	conda install -n R -c conda-forge r-ggplot2=3.2.1
-	conda install -n R -c conda-forge r-ggpubr
-	conda install -n R -c r r-nnet
-	conda install -n R -c conda-forge r-plotly 
-	conda install -n R r-tidyverse 
-	conda install -n R -c conda-forge r-viridis
-	conda install -n R -c bioconda r-matrixstats
-	conda install -n R -c conda-forge r-ranger
-	conda install -n R -c conda-forge r-rcpparmadillo 
-	Rscript -e "install.packages('abcrf', repos='https://cloud.r-project.org/')"
+#	conda install -n R -c r r-data.table
+#	conda install -n R -c conda-forge r-factominer 
+#	conda install -n R -c conda-forge r-ggplot2=3.2.1
+#	conda install -n R -c conda-forge r-ggpubr
+#	conda install -n R -c r r-nnet
+#	conda install -n R -c conda-forge r-plotly 
+#	conda install -n R r-tidyverse 
+#	conda install -n R -c conda-forge r-viridis
+#	conda install -n R -c bioconda r-matrixstats
+#	conda install -n R -c conda-forge r-ranger
+#	conda install -n R -c conda-forge r-rcpparmadillo 
+#	Rscript -e "install.packages('abcrf', repos='https://cloud.r-project.org/')"
 	#/tools/miniconda/envs/R/bin/Rscript -e "install.packages('abcrf', repos='https://cloud.r-project.org/')"
 #
 

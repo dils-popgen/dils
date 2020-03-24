@@ -1,1 +1,2 @@
 yaml	mail_address	speciesA	speciesB	bestModel	probaMigration	probaMigHetero	status	piA	piB	netDivergence
+FEqbm5QEkD	user@gmail.com	ama	chi	isolation	0.319516666666667	0	species	0.00589	0.00532	0.00376

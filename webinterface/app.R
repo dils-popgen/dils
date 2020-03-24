@@ -1362,7 +1362,7 @@ server <- function(input, output, session = session) {
 	## get a time stamp when clicking on the "Run the ABC" button
 	time_stamp <- reactiveVal(0)
 
-	metaanalysis_file <- "metaanalysis.txt"
+	metaanalysis_file <- "webinterface/metaanalysis.txt"
 
 	observeEvent( input$runABC, {time_stamp(system('echo $(mktemp -d -t XXXXXXXXXX | cut -d"/" -f3)', intern=T))})
 	output$time_stamp <- renderText({time_stamp()})
@@ -1426,14 +1426,14 @@ server <- function(input, output, session = session) {
 
 	observeEvent( input$runABC, {
 		if(input$nspecies==1){
-			commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
+			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
 #				commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_1pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
 			cat(commande)
 			DILS_command(system(commande))
 		}
 		
 		if(input$nspecies==2){
-			commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
+			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
 #				commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_2pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
 			cat(commande)
 			DILS_command(system(commande))
@@ -3718,7 +3718,7 @@ server <- function(input, output, session = session) {
 		meta = read.table(metaanalysis_file, sep='\t', h=T)
 		
 		# popphyl
-		x = read.table("/tools/webinterface/popPhyl.txt", h=T)
+		x = read.table("webinterface/popPhyl.txt", h=T)
 		pmig_HH = x$Pongoing_migration_Mhetero_Nhetero 
 		proba_migration = pmig_HH
 		seuil1 = 0.6419199
