@@ -33,5 +33,5 @@
 2. Installation
 	1. clone git repository
 	2. build singularity image: `singularity build popgenomics.sif popgenomics.def`
-	3. run the shiny app: `./popgenomics.sif host=[ip adress of your server] port=[port number where shiny is reachable]` eg: `./popgenomics.sif host=127.0.0.1 port=500`
+	3. run the shiny app (may need root premissions): `Rscript webinterface/app.R host=[ip adress of your server] port=[port number where shiny is reachable]` eg: `Rscript webinsterface/app.R host=127.0.0.1 port=500`
 	4. shiny app is now available in your web browser at http://[ip adress of your server]:[pourt number]
