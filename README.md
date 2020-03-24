@@ -37,6 +37,6 @@
 	4. shiny app is now available in your web browser at http://[ip adress of your server]:[pourt number]
 
 3. Execute the web interface  
-	Rscript webinterface/app.R host=[IP address] port=[port]
+	Rscript webinterface/app.R host=[IP address] port=[port]  
 	__example__ : Rscript webinterface/app.R host=127.0.0.9 port=8912  
 
