@@ -26,6 +26,8 @@
 #################################################################################################################################
 #################################################################################################################################
 
+# Rscript webinterface/app.R host=127.0.0.9 port=8912
+
 options(encoding="UTF-8")
 
 for(tmp in commandArgs()){
@@ -168,13 +170,13 @@ convertMenuItem <- function(mi,tabName) {
 # welcome
 welcome_page <- fluidPage(
 	fluidRow(
-		boxPlus(title = h2("Overview"), width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = TRUE, collapsed = TRUE,
+		boxPlus(title = h2("Overview"), width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = TRUE, collapsed = FALSE,
 			h3(strong("DILS"), "= ", strong("D", .noWS='outside'),"emographic ", strong("I", .noWS='outside'), "nferences with ", strong("L", .noWS='outside'), "inked ", strong("S", .noWS='outside'), "election"),
 			h3(strong("DILS"), "is a DNA sequence analysis workflow to study the demographic history of sampled populations or species by using Approximate Bayesian Computations."),
 			h3("From a single uploaded input file containing sequenced genes or DNA fragments,", strong("DILS"), "will:"),
 			HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1.</b> simulate different models/scenarios</h3>'),
 			HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2.</b> select the best model using an ABC approach based on <a href="https://cran.r-project.org/web/packages/abcrf/index.html" target="_blank"><font color="#c7f464"><b>random forests</b></font></a></h3>'),
-			HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>3.</b> estimate the parameters of the best model using a <a href="https://cran.r-project.org/web/packages/abc/index.html" target="_blank"><font color="#c7f464"><b>neural network</b></font></a> approach</h3>'),
+			HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>3.</b> estimate the parameters of the best model using a <a href="https://cran.r-project.org/web/packages/abc/index.html" target="_blank"><font color="#c7f464"><b>neural network</b></font></a> and a random forest approaches</h3>'),
 			HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>4.</b>measure the robustness of the analyses <b>DILS</b> is transparent on the ability of its inferences to reproduce the observed data or not</h3>'),
 			hr(),
 			h3("The primary goal of", strong("DILS"), "is to distinguish between isolation versus migration models of divergence between sister gene pools."),
@@ -222,7 +224,7 @@ welcome_page <- fluidPage(
 				HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>IM</b> = isolation with migration: the two daughter populations continuously exchange alleles until present time.</h3>'),
 				HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>SC</b> = secondary contact: the daughter populations first evolve in isolation (forward in time), then experience a secondary contact and start exchanging alleles at time T<sub>SC</sub>. Red phylogenies represent possible gene trees under each alternative model.</h3>'),
 				hr(),
-				h3(strong("4 populations/species")),
+				HTML("<h3><b>4 populations/species <i>(available soon)</i></b></h3>"),
 				htmlOutput("models_picture_4pop"),
 				HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A single generalist model, declined in 64 sub-models according to if there is one:</h3>'),
 				HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;migration (bidirectional) or no migration between A and B, and/or between C and D.</h3>'),
@@ -240,7 +242,7 @@ welcome_page <- fluidPage(
 			column(width=12,
 				h3("All demographic models exist under AT LEAST two alternative genomic models concerning the effective size:"),
 				HTML('<h3><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1) genomic homogeneity</b>, where the effective size <b><i>Ne</i></b> is genomically homogeneous (purple bar), <i>i.e.</i>, all locus are simulated by sharing the same <b>Ne</b> value. In this model <b>DILS</b> will try to estimate the value of <i>Ne</i> best explaining the observed data. <i>Ne</i> being independently estimated in all populations (current, past).'),
-				HTML('<h3><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) genomic heterogeneity</b> where <i>Ne</i> is genomically heterogeneous (yellow distribution), <i>i.e.</i>, all locus are simulated with a value of <i>Ne</i> drawn in a Beta(&alpha;, &beta;) distribution. In this model <b>DILS</b> will try to estimate the value of <i>Ne</i> as well as the two shape parameters <b>shape1</b> and <b>shape2</b> (&alpha; and &beta;) that best explain the observations. Here, <b>DILS</b> assumes that all populations (current and past) share the same Beta(&alpha;, &beta;) distribution but are independently rescaled by different <i>Ne</i> values.')
+				HTML('<h3><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) genomic heterogeneity</b> where <i>Ne</i> is genomically heterogeneous (green distribution), <i>i.e.</i>, all locus are simulated with a value of <i>Ne</i> drawn in a Beta(&alpha;, &beta;) distribution. In this model <b>DILS</b> will try to estimate the value of <i>Ne</i> as well as the two shape parameters <b>shape1</b> and <b>shape2</b> (&alpha; and &beta;) that best explain the observations. Here, <b>DILS</b> assumes that all populations (current and past) share the same Beta(&alpha;, &beta;) distribution but are independently rescaled by different <i>Ne</i> values.')
 			),
 			
 			# Sidebar panel for inputs
@@ -349,7 +351,7 @@ welcome_page <- fluidPage(
 			h3(strong("2."), "...a workflow managed by", a(span(strong("Snakemake."), style = "color:teal"), href="https://snakemake.readthedocs.io/en/stable/", target="_blank")),
 			htmlOutput("welcome_picture"),
 			hr(),
-			h3("The code is fully open-source, freely distributed on", a(span(strong("GitHub"), style = "color:teal"), href="https://github.com/popgenomics/DILS", target="_blank"), "and can be immediately redeployed on any cluster using", a(span(strong("SLURM"), style = "color:teal"), href="https://slurm.schedmd.com/documentation.html", target="_blank"), "thanks to a", a(span(strong("Singularity"), style = "color:teal"), href="https://sylabs.io/docs/#doc-3.2", target="_blank"), "image."),
+			h3("The code is fully open-source, freely distributed on", a(span(strong("GitHub"), style = "color:teal"), href="https://github.com/popgenomics/DILS_web", target="_blank"), "and can be immediately redeployed on any cluster using", a(span(strong("SLURM"), style = "color:teal"), href="https://slurm.schedmd.com/documentation.html", target="_blank"), "thanks to a", a(span(strong("Singularity"), style = "color:teal"), href="https://sylabs.io/docs/#doc-3.2", target="_blank"), "image."),
 			
 			h3("This redeployment allows the user to modify the models to be compared, to add summary statistics, etc..."),
 			h3("The workflow can be simply executed from the command line without going through the web interface."),
@@ -763,7 +765,7 @@ ui <- dashboardPage(
 	#skin = "black",
 	dashboardHeader(title = "menu DILS",
 #		tags$li(class = "dropdown", socialButton(url = "https://github.com/popgenomics/ABConline", type = "github"), tags$img(height = "auto"))
-		tags$li(class="dropdown", tags$a(href="https://github.com/popgenomics/DILS", icon("github"), "Source Code", target="_blank")),
+		tags$li(class="dropdown", tags$a(href="https://github.com/popgenomics/DILS_web", icon("github"), "Source Code", target="_blank")),
 		tags$li(class="dropdown", tags$a(href="https://groups.google.com/forum/#!forum/dils---demographic-inferences-with-linked-selection", icon("envelope"), "Help/Discussion", target="_blank"))
 
 	),
