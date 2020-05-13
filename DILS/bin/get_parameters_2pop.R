@@ -388,8 +388,8 @@ get_posterior<-function(nameA='spA', nameB='spB', nSubdir=10, sub_dir_sim='itera
 	for(i in 1:nparams){
 		parameter = params_model_rf[,i]
 		data = data.frame(parameter, stats_model_rf)
-		mod = regAbcrf(parameter~., data, ntree=1000)
-		estimate = predict(mod, target_rf, data)
+		mod = regAbcrf(parameter~., data, ntree=1000, paral=T, ncores=ncores)
+		estimate = predict(mod, target_rf, data, paral=T, ncores=ncores)
 
 		param_name = colnames(params_sim[[model]])[i]
 		res_rf[[param_name]] = list()
