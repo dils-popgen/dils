@@ -176,7 +176,7 @@ welcome_page <- fluidPage(
 			h3("From a single uploaded input file containing sequenced genes or DNA fragments,", strong("DILS"), "will:"),
 			HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1.</b> simulate different models/scenarios</h3>'),
 			HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2.</b> select the best model using an ABC approach based on <a href="https://cran.r-project.org/web/packages/abcrf/index.html" target="_blank"><font color="#c7f464"><b>random forests</b></font></a></h3>'),
-			HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>3.</b> estimate the parameters of the best model using a <a href="https://cran.r-project.org/web/packages/abc/index.html" target="_blank"><font color="#c7f464"><b>neural network</b></font></a> and a random forest approaches</h3>'),
+			HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>3.</b> estimate the parameters of the best model using <a href="https://cran.r-project.org/web/packages/abc/index.html" target="_blank"><font color="#c7f464"><b>neural network</b></font></a> and random forest approaches</h3>'),
 			HTML('<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>4.</b>measure the robustness of the analyses <b>DILS</b> is transparent on the ability of its inferences to reproduce the observed data or not</h3>'),
 			hr(),
 			h3("The primary goal of", strong("DILS"), "is to distinguish between isolation versus migration models of divergence between sister gene pools."),
@@ -746,8 +746,8 @@ information <- fluidPage(
 			
 			#box(title = h2("Acknowledgment"), width = 12, solidHeader = TRUE, background = NULL, status = "primary",
 			boxPlus(title = h2("Acknowledgment"), width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
-				HTML("<h3>Please, if you use this online version of DILS, do not forget to recognize and acknowledge the free provision of calculation cores by France Bioinformatique by using for instance:</h3>"),
-				HTML('<h3><i>The demographic inferences were conducted on the IFB Core Cluster which is part of the National Network of Compute Resources (NNCR) of the <a href="https://www.france-bioinformatique.fr/fr" target="_blank"><font color="#c7f464"><b>Institut Fran&ccedil;ais de Bioinformatique (IFB)</b></font></a></i></h3>')
+				HTML("<h3>Please, if you use this online version of DILS, do not forget to recognize and acknowledge the free provision of calculation cores by the Laboratoire de Biométrie et Biologie Évolutive UMR-CNRS 5558, by using for instance:</h3>"),
+				HTML('<h3><i>The demographic inferences were conducted on the core cluster of the LBBE laboratory (UMRCNRS 5558)</i></h3>')
 
 
 			),
@@ -3625,6 +3625,7 @@ server <- function(input, output, session = session) {
 				htmltools::div(style = "display:inline-block", plotlyOutput("plot_greyzone", width = "auto"))
 			}else{
 				rootName = strsplit(fileName$name, '.', fixed=T)[[1]][1]
+
 				fluidPage(style="margin-top:-3em",
 					if( rootName%in%allData()[['meta']][,1]==FALSE ){
 						if(allData()[['users_infos']][1,2]==2){
@@ -3632,13 +3633,11 @@ server <- function(input, output, session = session) {
 								HTML('<H4>Clicking on this button <b>will save</b>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1)</b> the user&#39;s email address to contact him/her for future collaborative meta-analysis<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2)</b> the names of the organisms and the position of the point on the graph<br><b>Everything else uploaded by the user <u>will be deleted</u> from the server</b>.<br><br>An unfortunate click <b>can be cancelled</b> by uploading the same archive a second time and then clicking on <b>REMOVE THE POINT</b> button</H4>'),
 								actionButton("update_greyzone", "UPDATE THE FIGURE WITH YOUR RESULTS")
 							)
-						}else{
-							fluidRow(
-								HTML('<H4><b>This analysis is already part of the figure</b>.<br>You can remove it by clicking on the <b>REMOVE THE POINT</b> button.</H4>'),
-								actionButton("downgrade_greyzone", "REMOVE THE POINT")
-							)
-
+						}else{	
 						}
+					}else{
+fluidRow( HTML('<H4><b>This analysis is already part of the figure</b>.<br>You can remove it by clicking on the <b>REMOVE THE POINT</b> button.</H4>'), actionButton("downgrade_greyzone", "REMOVE THE POINT") )
+
 					},
 					
 					fluidRow(

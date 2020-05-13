@@ -77,5 +77,6 @@ tmp = "cp {0}/bpfile {0}/{1}/{2}_{3}; ".format(path, sub_dir_sim, sub_dir_model,
 tmp += "cd {0}/{1}/{2}_{3}; ".format(path, sub_dir_sim, sub_dir_model, iteration)
 
 tmp += "python {6}/priorgen_1pop.py {0} {1} {2} | {6}/msnsam tbs {3} {4} | pypy {6}/mscalc_1pop_SFS.py {5}".format(model, nmultilocus, config_yaml, nmultilocus*nlocus, mscommand, outgroup, binpath)
+print(tmp)
 os.system(tmp) # to submit the job using slurm
 
