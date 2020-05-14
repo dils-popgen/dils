@@ -31,7 +31,7 @@ binpath = "/tools/bin"
 
 nmultilocus = 1000 # number of multilocus simulations per iteration (1000)
 nIterations_model_comp = 10 # number of subdirectories for the simulations used in the RF model comparison (10)
-nIterations_estim = 1000 # number of subdirectories for the simulations used in the nnet param estimates (2000)
+nIterations_estim = 100 # number of subdirectories for the simulations used in the nnet param estimates (2000)
 nIterations_gof = 10 # number of subdirectories for the simulations used in the nnet param estimates (20)
 nCPU_R = 8 # number of CPUs for the model comp for the model forest R functions (20)
 ntree = 1000 # number of tree for the random forest (RF) model comparison (2000)

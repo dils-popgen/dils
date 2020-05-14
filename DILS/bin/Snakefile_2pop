@@ -43,14 +43,14 @@ MODELS_COMP = ['SC_1M_1N', 'SC_1M_2N', 'SC_2M_1N', 'SC_2M_2N', 'AM_1M_1N', 'AM_1
 
 # first and second estimation of parameters
 nIterations_gof = 10 # number of subdirectories for the simulations used in the nnet param estimates (10)
-nIterations_estim_1_3 = 1000 # number of subdirectories for the simulations used in the nnet param estimates (500)
+nIterations_estim_1_3 = 100 # number of subdirectories for the simulations used in the nnet param estimates (500)
 ITERATIONS_ESTIMATES_1_3 = range(nIterations_estim_1_3)
 ITERATIONS_GOF = range(nIterations_gof)
 nPosterior1 = 5000 # (5000)
 nPosterior3 = 5000 # (5000)
 
 # second estimation of parameters
-nIterations_estim_2 = 100 # number of subdirectories for the simulations used in the nnet param estimates (250)
+nIterations_estim_2 = 50 # number of subdirectories for the simulations used in the nnet param estimates (250)
 ITERATIONS_ESTIMATES_2 = range(nIterations_estim_2)
 ITERATIONS_GOF_2 = range(nIterations_gof)
 nPosterior2 = 1000 # (2000)
