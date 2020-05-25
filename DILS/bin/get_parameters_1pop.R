@@ -264,7 +264,7 @@ babar<-function(a,b,space=2,breaks="auto",AL=0.5,nameA="A",nameB="B",xl="",yl=""
 #}
 
 
-get_posterior<-function(nameA, nSubdir, sub_dir_sim, model, sub_dir_model, nPosterior, figure, transf, do_nnet=T){
+get_posterior<-function(nameA, nSubdir, sub_dir_sim, model, sub_dir_model, nPosterior, figure, transf, do_nnet=T, ncores=1 ){
 	library(data.table)
 	options(digits=5)
 	###################
@@ -348,8 +348,8 @@ get_posterior<-function(nameA, nSubdir, sub_dir_sim, model, sub_dir_model, nPost
 	for(i in 1:nParams){
 		parameter = params_model_rf[,i]
 		data = data.frame(parameter, stats_model_rf[, -toRemove])
-		mod = regAbcrf(parameter~., data, ntree=1000)
-		estimate = predict(mod, target_rf[-toRemove], data)
+		mod = regAbcrf(parameter~., data, ntree=1000, paral=T, ncores=ncores)
+		estimate = predict(mod, target_rf[-toRemove], data, paral=T, ncores=ncores)
 
 		param_name = colnames(params_sim)[i]
 		res_rf[[param_name]] = list()

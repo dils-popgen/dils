@@ -746,10 +746,8 @@ information <- fluidPage(
 			
 			#box(title = h2("Acknowledgment"), width = 12, solidHeader = TRUE, background = NULL, status = "primary",
 			boxPlus(title = h2("Acknowledgment"), width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
-				HTML("<h3>Please, if you use this online version of DILS, do not forget to recognize and acknowledge the free provision of calculation cores by the Laboratoire de Biométrie et Biologie Évolutive UMR-CNRS 5558, by using for instance:</h3>"),
-				HTML('<h3><i>The demographic inferences were conducted on the core cluster of the LBBE laboratory (UMRCNRS 5558)</i></h3>')
-
-
+				HTML('<h3>Please, if you use this online version of DILS, do not forget to recognize and acknowledge the free provision of calculation cores by the Laboratoire de Biométrie et Biologie Évolutive UMR-CNRS 5558, by using for instance:</h3>'),
+				HTML('<h3>The demographic inferences were conducted on the core cluster of the LBBE laboratory (UMR-CNRS 5558)></h3>')
 			),
 			
 			#box(title = h2("Partners"), width = 12, solidHeader = TRUE, background = NULL, status = "primary",

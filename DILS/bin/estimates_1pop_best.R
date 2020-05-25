@@ -60,7 +60,7 @@ source(paste(binpath, "/get_parameters_1pop.R", sep=''))
 options(digits=5)
 
 write(paste('\n#####\n\nparameters of model using neural_network (upper lines) and random_forest (lower lines): ', bestModel, sep=''), outfile, append=T)
-posterior = get_posterior(nameA=nameA, nSubdir=nSubdir, sub_dir_sim=sub_dir_sim, model='best_model', sub_dir_model='bestModel', nPosterior=nPosterior, figure=T, transf=transf)
+posterior = get_posterior(nameA=nameA, nSubdir=nSubdir, sub_dir_sim=sub_dir_sim, model='best_model', sub_dir_model='bestModel', nPosterior=nPosterior, figure=T, transf=transf, ncores=ncores)
 write('param\tHPD2.5%\tmedian\tHPD%97.5', outfile, append=T)
 for(i in 1:ncol(posterior[['neural_network']])){
 	param_i = colnames(posterior[['neural_network']])[i]
