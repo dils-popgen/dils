@@ -9,7 +9,7 @@
 	
 # 2 - Installation
 	1. clone git repository  
-	`git clone https://github.com/popgenomics/DILS_web`  
+	```git clone https://github.com/popgenomics/DILS_web```  
 
 	2. move into the DILS repertory  
 	`cd DILS_web`  
