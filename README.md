@@ -10,7 +10,7 @@
 	2. move into the DILS repertory  
 	`cd DILS_web`  
 		
-	3. build singularity image:  
+	3. build singularity image (could take ~20minutes):  
 	`sudo singularity build DILS.sif DILS.def`  
 	
 	4. run the shiny app (may need root premissions):
