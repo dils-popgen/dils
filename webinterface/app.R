@@ -1429,7 +1429,7 @@ server <- function(input, output, session = session) {
 	observeEvent( input$runABC, {
 		if(input$nspecies==1){
 #			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
-			commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
+			commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --latency-wait 20 --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
 #				commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_1pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
 			cat(commande)
 			DILS_command(system(commande))
@@ -1437,7 +1437,7 @@ server <- function(input, output, session = session) {
 		
 		if(input$nspecies==2){
 #			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
-			commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
+			commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --latency-wait 20 --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
 #				commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_2pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
 			cat(commande)
 			DILS_command(system(commande))
