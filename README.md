@@ -15,9 +15,11 @@
 	
 	4. run the shiny app (may need root premissions):  
 	`sudo singularity exec --bind DILS/:/mnt DILS.sif host=[ip adress of your server] port=[port number where shiny is reachable] nCPU=[maximum number of CPUs to use simultaneously]`  
-	 eg:  
+	 eg with a big machine with 100 CPUs:  
 	`sudo singularity exec --bind DILS/:/mnt DILS.sif webinterface/app.R host=127.0.0.9 port=8912 nCPU=100`
 	
+	Please keep in mind that the max number of CPUs is the maximum number of CPUs DILS will use at certain times, but that DILS will not use 100% of the indicated number of CPUs throughout its whole run. This maximum usage will be punctual.  
+	  
 	5. shiny app is now available in your web browser at http://[ip adress of your server]:[pourt number],  
 	eg:  
 	`http://127.0.0.9:8912/`
