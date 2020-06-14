@@ -61,6 +61,7 @@ http://127.0.0.9:8912/
 All example files are in the **example** sub_directory.  
 
 ### 1. Unarchive the example file  
+DILS **only** works with **fasta files**. The example file is a tar.xz file only to store it on GitHub, but not to be read in DILS. In this case here, you must first decompress the archive like this:  
 ```
 tar -Jxvf mytilus.tar.xz
 ```
