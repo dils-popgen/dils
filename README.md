@@ -1,4 +1,4 @@
-# DILS_web
+# DILS
 # Table of contents
 1. [Dependencies](#1---dependencies)     
 2. [Installation](#2---installation)  
