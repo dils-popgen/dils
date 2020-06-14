@@ -45,15 +45,6 @@ http://127.0.0.9:8912/
 But chose the IP adress and port number you want 
   
 # 4 - Example  
-## Unarchive the example fasta input file  
-```
-tar -Jxvf mytilus.tar.xz
-```
-Will generates the input file: 
-```
-mytilus.fas
-```
-
 ## Execute DILS in your web browser
 In your terminal, from the DILS_web directory:  
 ```  
@@ -66,7 +57,18 @@ Then in your web brower:
 http://127.0.0.9:8912/
 ```
 
-You can then upload the fasta file by clicking on:  
+## Running ABC from a fasta file  
+### Unarchive the example file  
+```
+tar -Jxvf mytilus.tar.xz
+```
+Will generates the input file: 
+```
+mytilus.fas
+```
+
+###  Run a demographic ABC analysis  
+Upload the **fasta** file by clicking on:  
 1. ABC  
 2. Upload data  
 3. Browse (Input file upload)  
