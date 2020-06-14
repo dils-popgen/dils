@@ -25,10 +25,9 @@ sudo singularity build DILS.sif DILS.def
 
 # 3 - Execution  	
 ## run the shiny app (may need root premissions):  
-```
 sudo singularity exec --bind DILS/:/mnt DILS.sif host=[ip adress of your server] port=[port number where shiny is reachable] nCPU=[maximum number of CPUs to use simultaneously]
-```    
- eg with a big machine with 100 CPUs:  
+  
+eg with a big machine with 100 CPUs:  
 ```  
 sudo singularity exec --bind DILS/:/mnt DILS.sif webinterface/app.R host=127.0.0.9 port=8912 nCPU=100
 ```  
