@@ -5,7 +5,9 @@
 3. [Execution](#3---execution)  
 
 # 1 - Dependencies
-	[singularity](https://sylabs.io/docs/) (tested with 3.1.1) 
+Only tested on different free Linux distributions, not payable OS.  
+Singularity has to be installed on the machine.  
+[singularity](https://sylabs.io/docs/) (tested with 3.1.1)   
 	
 # 2 - Installation
 ## clone git repository  
