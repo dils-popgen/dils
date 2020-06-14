@@ -44,7 +44,7 @@ But chose the IP adress and port number you want
 # 4 - Example  
 ## Unarchive the example fasta input file  
 ```
-tar -Jzvf mytilus.tar.xz
+tar -Jxvf mytilus.tar.xz
 ```
 Will generates the input file: 
 ```
