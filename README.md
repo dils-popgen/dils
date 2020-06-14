@@ -50,6 +50,6 @@
 	`http://127.0.0.9:8912/`
 
 3. Execute the web interface  
-	Rscript webinterface/app.R host=[IP address] port=[port] nCPU=[max number of CPUs to use]
+	Rscript webinterface/app.R host=[IP address] port=[port] nCPU=[max number of CPUs to use]  
 	__example__ : Rscript webinterface/app.R host=127.0.0.9 port=8912 nCPU=100
 
