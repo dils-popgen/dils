@@ -59,7 +59,7 @@ In your terminal, from the DILS_web directory:
 ```  
 singularity exec --bind DILS/:/mnt DILS.sif webinterface/app.R host=127.0.0.9 port=8912 nCPU=100
 ```  
-May need to be executed with a `sudo`  
+May require `sudo` to be run
   
 Then in your web brower:  
 ```
