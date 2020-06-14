@@ -58,6 +58,8 @@ http://127.0.0.9:8912/
 ```
 
 ## Running ABC from a fasta file  
+All example files are in the **example** sub_directory.  
+
 ### 1. Unarchive the example file  
 ```
 tar -Jxvf mytilus.tar.xz
@@ -72,4 +74,15 @@ Upload the **fasta** file by clicking on:
 1. ABC  
 2. Upload data  
 3. Browse (Input file upload)  
+  
+Then you can set up the analysis and execute it.  
+
+## 3. Exploring the results
+Upload the archive produced by DILS in a **tar.gz format** (doesn't need to be extracted) by clicking on:  
+1. Results visualization  
+2. Upload results  
+3. Browse (Results to upload)  
+
+Then you can explore the observed data and the results of the inferences.  
+
  
