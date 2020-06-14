@@ -91,7 +91,7 @@ else:
 	sub_dir_model='migration'
 	tmp_migration = "cp {0}/bpfile {0}/locus_modelComp/{1}/; ".format(path, sub_dir_model)
 	tmp_migration += "cd {0}/locus_modelComp/{1}/; ".format(path, sub_dir_model)
-	tmp_migration += "python {0}/priorgen_gof_2pop_test_monolocus.py {1} {2} {3} {4} migration {5} | {0}/msnsam tbs {6} {7} >tmp.ms ;".format(binpath, model, nmultilocus, posterior_file, modeBarrier, population_growth, nmultilocus*nlocus, mscommand, outgroup)
+	tmp_migration += "python2 {0}/priorgen_gof_2pop_test_monolocus.py {1} {2} {3} {4} migration {5} | {0}/msnsam tbs {6} {7} >tmp.ms ;".format(binpath, model, nmultilocus, posterior_file, modeBarrier, population_growth, nmultilocus*nlocus, mscommand, outgroup)
 	tmp_migration += "cat tmp.ms | pypy {0}/mscalc_2pop_SFS.py {1}; ".format(binpath, outgroup)
 	print(tmp_migration)
 	os.system(tmp_migration)
@@ -100,7 +100,7 @@ else:
 	sub_dir_model='isolation'
 	tmp_isolation = "cp {0}/bpfile {0}/locus_modelComp/{1}/; ".format(path, sub_dir_model)
 	tmp_isolation += "cd {0}/locus_modelComp/{1}/; ".format(path, sub_dir_model)
-	tmp_isolation += "python {0}/priorgen_gof_2pop_test_monolocus.py {1} {2} {3} {4} isolation {5} | {0}/msnsam tbs {6} {7} >tmp.ms ;".format(binpath, model, nmultilocus, posterior_file, modeBarrier, population_growth, nmultilocus*nlocus, mscommand, outgroup)
+	tmp_isolation += "python2 {0}/priorgen_gof_2pop_test_monolocus.py {1} {2} {3} {4} isolation {5} | {0}/msnsam tbs {6} {7} >tmp.ms ;".format(binpath, model, nmultilocus, posterior_file, modeBarrier, population_growth, nmultilocus*nlocus, mscommand, outgroup)
 	tmp_isolation += "cat tmp.ms | pypy {0}/mscalc_2pop_SFS.py {1}; ".format(binpath, outgroup)
 	print(tmp_isolation)
 	os.system(tmp_isolation)

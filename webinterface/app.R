@@ -29,14 +29,14 @@
 # Rscript webinterface/app.R host=127.0.0.9 port=8912
 
 options(encoding="UTF-8")
+nCPU_server = 6 # maximum number of simultaneously running jobs (400 on IFB's cluster)
 
 for(tmp in commandArgs()){
 	tmp = strsplit(tmp, '=')
 	if(tmp[[1]][1] == 'port'){ port = as.numeric(tmp[[1]][2]) }
 	if(tmp[[1]][1] == 'host'){ host = as.character(tmp[[1]][2]) }
+	if(tmp[[1]][1] == 'nCPU'){ nCPU_server = as.integer(tmp[[1]][2]) }
 }
-
-nCPU_server = 400 # maximum number of simultaneously running jobs (400 on IFB's cluster)
 
 #options('shiny.port'=as.numeric(commandArgs()[2]), 'shiny.host'=commandArgs()[3])
 
@@ -746,8 +746,10 @@ information <- fluidPage(
 			
 			#box(title = h2("Acknowledgment"), width = 12, solidHeader = TRUE, background = NULL, status = "primary",
 			boxPlus(title = h2("Acknowledgment"), width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
-				HTML('<h3>Please, if you use this online version of DILS, do not forget to recognize and acknowledge the free provision of calculation cores by the Laboratoire de Biométrie et Biologie Évolutive UMR-CNRS 5558, by using for instance:</h3>'),
-				HTML('<h3>The demographic inferences were conducted on the core cluster of the LBBE laboratory (UMR-CNRS 5558)></h3>')
+				HTML("<h3>Please, if you use this online version of DILS, do not forget to recognize and acknowledge the free provision of calculation cores by the Laboratoire de Biométrie et Biologie Évolutive UMR-CNRS 5558, by using for instance:</h3>"),
+				HTML('<h3><i>The demographic inferences were conducted on the core cluster of the LBBE laboratory (UMRCNRS 5558)</i></h3>')
+
+
 			),
 			
 			#box(title = h2("Partners"), width = 12, solidHeader = TRUE, background = NULL, status = "primary",
@@ -1426,21 +1428,25 @@ server <- function(input, output, session = session) {
 
 	observeEvent( input$runABC, {
 		if(input$nspecies==1){
-			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
+#			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
+			commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
 #				commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_1pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
 			cat(commande)
 			DILS_command(system(commande))
 		}
 		
 		if(input$nspecies==2){
-			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
+#			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
+			commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
 #				commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_2pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
 			cat(commande)
 			DILS_command(system(commande))
 		}
 	})
 	
-	output$DILS_command <- renderText({DILS_command()})
+
+		
+		output$DILS_command <- renderText({DILS_command()})
 
 	## Check upload
 	output$check_upload_info <- renderUI({

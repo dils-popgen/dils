@@ -79,7 +79,7 @@ if mscommand == "":
 #tmp += "mkdir {0}/{1}/{2}_{3}; ".format(path, sub_dir_sim, sub_dir_model, iteration)
 tmp = "cp {0}/bpfile {0}/{1}/{2}_{3}; ".format(path, sub_dir_sim, sub_dir_model, iteration)
 tmp += "cd {0}/{1}/{2}_{3}; ".format(path, sub_dir_sim, sub_dir_model, iteration)
-tmp += "python {0}/priorgen_2pop_popGrowth.py {1} {2} {3} | {0}/msnsam tbs {4} {5} | pypy {0}/mscalc_2pop_SFS.py {6}".format(binpath, model, nmultilocus, config_yaml, nmultilocus*nlocus, mscommand, outgroup)
+tmp += "python2 {0}/priorgen_2pop_popGrowth.py {1} {2} {3} | {0}/msnsam tbs {4} {5} | pypy {0}/mscalc_2pop_SFS.py {6}".format(binpath, model, nmultilocus, config_yaml, nmultilocus*nlocus, mscommand, outgroup)
 
 print(tmp)
 os.system(tmp) # to submit the job using slurm

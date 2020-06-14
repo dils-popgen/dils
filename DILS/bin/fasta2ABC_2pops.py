@@ -479,6 +479,7 @@ if nameOut == 'NA':
 
 			# loop over pos:
 			for pos in range(L):
+#				print('{0}: {1}'.format(locus_i, pos))
 				alignmentOfPos = [] # set of pos in the alignment, starting at the position 'pos1'
 				# loop over individuals:
 				# get all pos in the alignment

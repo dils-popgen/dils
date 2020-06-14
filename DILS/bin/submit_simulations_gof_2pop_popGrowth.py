@@ -88,7 +88,7 @@ tmp = "cp {0}/bpfile {0}/{1}/{2}_{3}; ".format(path, sub_dir_sim, sub_dir_model,
 tmp += "cd {0}/{1}/{2}_{3}; ".format(path, sub_dir_sim, sub_dir_model, iteration)
 
 #tmp += "{8}/priorgen_gof_2pop_popGrowth.py {0} {1} {2} {6} {7} | {8}/msnsam tbs {3} {4} | {8}/mscalc_2pop_SFS.py {5}".format(model, nmultilocus, posterior_file, nmultilocus*nlocus, mscommand, outgroup, modeBarrier, modePrior, binpath)
-tmp += "python {0}/priorgen_gof_2pop_popGrowth.py {1} {2} {3} {4} {5} | {0}/msnsam tbs {6} {7} | pypy {0}/mscalc_2pop_SFS.py {8}".format(binpath, model, nmultilocus, posterior_file, modeBarrier, modePrior, nmultilocus*nlocus, mscommand, outgroup)
+tmp += "python2 {0}/priorgen_gof_2pop_popGrowth.py {1} {2} {3} {4} {5} | {0}/msnsam tbs {6} {7} | pypy {0}/mscalc_2pop_SFS.py {8}".format(binpath, model, nmultilocus, posterior_file, modeBarrier, modePrior, nmultilocus*nlocus, mscommand, outgroup)
 #tmp2 = 'sbatch --nodes=1 --ntasks-per-node=1 --time=02:00:00 -J {0}_{1} --wrap="{2}"\n'.format(model, iteration, tmp)
 
 print(tmp)
