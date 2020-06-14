@@ -13,7 +13,7 @@
 	3. build singularity image (could take ~20minutes):  
 	`sudo singularity build DILS.sif DILS.def`  
 	
-	4. run the shiny app (may need root premissions):
+	4. run the shiny app (may need root premissions):  
 	`sudo singularity exec --bind DILS/:/mnt DILS.sif host=[ip adress of your server] port=[port number where shiny is reachable] nCPU=[maximum number of CPUs to use simultaneously]`  
 	 eg:  
 	`sudo singularity exec --bind DILS/:/mnt DILS.sif webinterface/app.R host=127.0.0.9 port=8912 nCPU=100`
