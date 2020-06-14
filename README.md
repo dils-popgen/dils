@@ -34,9 +34,36 @@ sudo singularity exec --bind DILS/:/mnt DILS.sif webinterface/app.R host=127.0.0
 
 Please keep in mind that the max number of CPUs is the maximum number of CPUs DILS will use at certain times, but that DILS will not use 100% of the indicated number of CPUs throughout its whole run. This maximum usage will be punctual.  
   
-shiny app is now available in your web browser at http://[ip adress of your server]:[pourt number],  
+shiny app is now available in your web browser at http://[ip adress of your server]:[port number],  
 eg:  
 ```
 http://127.0.0.9:8912/
 ```
+But chose the IP adress and port number you want 
+  
+# 4 - Example  
+## Unarchive the example fasta input file  
+```
+tar -Jzvf mytilus.tar.xz
+```
+Will generates the input file: 
+```
+mytilus.fas
+```
 
+## Execute DILS in your web browser
+In your terminal, from the DILS_web directory:  
+```  
+sudo singularity exec --bind DILS/:/mnt DILS.sif webinterface/app.R host=127.0.0.9 port=8912 nCPU=100
+```  
+  
+Then in your web brower:  
+```
+http://127.0.0.9:8912/
+```
+
+You can then upload the fasta file by clicking on:  
+1. ABC  
+2. Upload data  
+3. Browse (Input file upload)  
+ 
