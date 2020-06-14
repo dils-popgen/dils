@@ -58,7 +58,7 @@ http://127.0.0.9:8912/
 ```
 
 ## Running ABC from a fasta file  
-### Unarchive the example file  
+### 1. Unarchive the example file  
 ```
 tar -Jxvf mytilus.tar.xz
 ```
@@ -67,7 +67,7 @@ Will generates the input file:
 mytilus.fas
 ```
 
-###  Run a demographic ABC analysis  
+###  2. Run a demographic ABC analysis  
 Upload the **fasta** file by clicking on:  
 1. ABC  
 2. Upload data  
