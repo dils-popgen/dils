@@ -1340,16 +1340,24 @@ server <- function(input, output, session = session) {
 					title = h2("Run ABC"), width = NULL, icon = "fa fa-heart", solidHeader = TRUE, gradientColor = "teal",
 					boxToolSize = "lg", footer_padding = TRUE, collapsible = TRUE, collapsed = TRUE, closable = FALSE,
 					enable_label = TRUE, label_text = "Are you ready?", label_status = "danger",
-					h3("Submission of the ABC workflow"),
-					actionButton("runABC", label = "Run the ABC", size = 'md', width = '100%', fullwidth = TRUE),
-					h3("Number of submitted analysis (you can change the studied populations/species and the priors between 2 analysis):"),
-					verbatimTextOutput('nClicks'),
+					h3('Laptop or bigger?'),
+				#	switchInput(inputId = 'lightExecution', value=TRUE, label = 'light mode', status = 'default', inline=T),
+					HTML('<H4>ABC inferences can be greedy.<br>For instance, in 2-populations analysis, Normal mode will execute 874 jobs while the Light mode will execute 184 jobs<br>On a laptop: use Light mode.<br>Just be aware that a light mode will be handy for exploring priors, will have very little impact on model comparisons but parameter estimates will not be great.</H4>'),
+					switchInput(inputId = 'lightMode', offLabel = 'Normal mode', onLabel = 'Light mode', onStatus = 'success', offStatus = 'primary', value = F, labelWidth = '100px', size = 'large'),
 					hr(),
-					h3("Timestamp of the last submitted analysis:"),
+					
+					h3('Submission of the ABC workflow'),
+					actionButton('runABC', label = 'Run ABC inferences', size = 'md', width = '150px', fullwidth = TRUE),
+
+					h3('Number of submitted analysis (you can change the studied populations/species and the priors between 2 analysis):'),
+					verbatimTextOutput('nClicks'),
+
+					hr(),
+					h3('Timestamp of the last submitted analysis:'),
 					verbatimTextOutput('time_stamp'),
 					hr(),
-					h3("DILS command line:"),
-					verbatimTextOutput("DILS_command")
+					h3('DILS command line:'),
+					verbatimTextOutput('DILS_command')
 				)
 			)
 		}else{return()}
@@ -1393,7 +1401,7 @@ server <- function(input, output, session = session) {
 		if(input$nspecies == 2){
 			write(paste("useSFS:", input$use_SFS, sep=' '), file = yaml_name, append=T)
 		}
-		
+		write(paste("lightMode:", input$lightMode, sep=' '), file = yaml_name, append=T)
 		write(paste("config_yaml:", yaml_name, sep=' '), file = yaml_name, append=T)
 		write(paste("timeStamp:", time_stamp(), sep=' '), file = yaml_name, append=T)
 		if(input$nspecies == 2){

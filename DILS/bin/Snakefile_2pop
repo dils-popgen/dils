@@ -30,30 +30,44 @@ python = 'python2'
 # links to the codes
 binpath = "/tools/bin"
 
+# light or normal mode
+lightMode = config['lightMode']
+
 # general property
 nmultilocus = 1000 # number of multilocus simulations per iteration (500)
 
 # model comparison
-nCPU_R = 8 # number of CPUs for the model comp for the model forest R functions (8)
-ntree = 1000 # number of tree for the random forest (RF) model comparison (1000)
-nIterations_model_comp = 10 # number of subdirectories for the simulations used in the RF model comparison
+if lightMode==False:
+	nCPU_R = 8 # number of CPUs for the model comp for the model forest R functions (8)
+	ntree = 1000 # number of tree for the random forest (RF) model comparison (1000)
+	nIterations_model_comp = 10 # number of subdirectories for the simulations used in the RF model comparison
+	nIterations_estim_1_3 = 200 # number of subdirectories for the simulations used in the nnet param estimates (500)
+	nIterations_estim_2 = 50 # number of subdirectories for the simulations used in the nnet param estimates (250)
+	nPosterior1 = 5000 # (5000)
+	nPosterior2 = 1000 # (2000)
+	nPosterior3 = 5000 # (5000)
+else:
+	nCPU_R = 2
+	ntree = 250
+	nIterations_model_comp = 5 # number of subdirectories for the simulations used in the RF model comparison
+	nIterations_estim_1_3 = 20 # number of subdirectories for the simulations used in the nnet param estimates (500)
+	nIterations_estim_2 = 10 # number of subdirectories for the simulations used in the nnet param estimates (250)
+	nPosterior1 = 1000 # (5000)
+	nPosterior2 = 250 # (2000)
+	nPosterior3 = 1000 # (5000)
+
 ITERATIONS_MODEL_COMP = range(nIterations_model_comp)
 #MODELS_COMP = ['PAN_1N', 'PAN_2N', 'SC_1M_1N', 'SC_1M_2N', 'SC_2M_1N', 'SC_2M_2N', 'AM_1M_1N', 'AM_1M_2N', 'AM_2M_1N', 'AM_2M_2N', 'IM_1M_1N', 'IM_1M_2N', 'IM_2M_1N', 'IM_2M_2N', 'SI_1N', 'SI_2N']
 MODELS_COMP = ['SC_1M_1N', 'SC_1M_2N', 'SC_2M_1N', 'SC_2M_2N', 'AM_1M_1N', 'AM_1M_2N', 'AM_2M_1N', 'AM_2M_2N', 'IM_1M_1N', 'IM_1M_2N', 'IM_2M_1N', 'IM_2M_2N', 'SI_1N', 'SI_2N']
 
 # first and second estimation of parameters
 nIterations_gof = 10 # number of subdirectories for the simulations used in the nnet param estimates (10)
-nIterations_estim_1_3 = 100 # number of subdirectories for the simulations used in the nnet param estimates (500)
 ITERATIONS_ESTIMATES_1_3 = range(nIterations_estim_1_3)
 ITERATIONS_GOF = range(nIterations_gof)
-nPosterior1 = 5000 # (5000)
-nPosterior3 = 5000 # (5000)
 
 # second estimation of parameters
-nIterations_estim_2 = 50 # number of subdirectories for the simulations used in the nnet param estimates (250)
 ITERATIONS_ESTIMATES_2 = range(nIterations_estim_2)
 ITERATIONS_GOF_2 = range(nIterations_gof)
-nPosterior2 = 1000 # (2000)
 
 # informations from the config.yaml file
 mail_address = config['mail_address']
