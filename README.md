@@ -4,6 +4,7 @@
 2. [Installation](#2---installation)  
 3. [Execution](#3---execution)  
 4. [Example](#4---example)  
+5. [Help and support](#5---help-and-support)
 
 # 1 - Dependencies
 Only tested on different free Linux distributions, not payable OS.  
@@ -86,4 +87,7 @@ Upload the archive produced by DILS in a **tar.gz format** (doesn't need to be e
 
 Then you can explore the observed data and the results of the inferences.  
 
- 
+# 5 - Help and support  
+For problems of installation, use or interpretation, do not hesitate to post a message on the following group:  
+https://groups.google.com/forum/#!forum/dils---demographic-inferences-with-linked-selection 
+
