@@ -11,7 +11,9 @@ Only tested on different free Linux distributions, not payable OS.
 Singularity has to be installed on the machine.  
 [singularity](https://sylabs.io/docs/) (tested with 3.1.1)   
 	
-# 2 - Installation
+# 2 - Installation  
+More details are provided in the **manual.pdf** file.  
+
 ## clone git repository  
 ```
 git clone https://github.com/popgenomics/DILS_web  
