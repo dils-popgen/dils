@@ -147,7 +147,7 @@ rule targets:
 
 	shell:
 		"""
-		tar -zcvf {timeStamp}.tar.gz {input.generalInfos} {input.lociInfos} {input.yaml} {input.Nref} {input.ABCloci} {input.ABCglobal} {input.recombination} {input.hierarchicalModel} {input.locusSpecificModelComp} {input.priorfile} {input.posteriorBest} {input.posteriorBestRF}  {input.posteriorBest3} {input.posteriorBestRF3} {input.gof} {input.gof2} {input.gofSFS} {input.gofSFS2} {input.allGOF} {input.PCAcoordSS} {input.PCAcontribSS} {input.PCAeigenSS}
+		tar -zcvf {timeStamp}.tar.gz {input.generalInfos} {input.lociInfos} {input.yaml} {input.Nref} {input.ABCloci} {input.ABCglobal} {input.ABCjsfs} {input.recombination} {input.hierarchicalModel} {input.reportModelComp} {input.locusSpecificModelComp} {input.priorfile} {input.posteriorBest} {input.posteriorBestRF}  {input.posteriorBest3} {input.posteriorBestRF3} {input.reportBest3} {input.gof} {input.gof2} {input.gofSFS} {input.gofSFS2} {input.allGOF} {input.PCAcoordSS} {input.PCAcontribSS} {input.PCAeigenSS}
 		touch slurm_tmp.out
 		rm slurm*out
 		rm -rf {timeStamp}		
@@ -180,7 +180,7 @@ rule fasta2ABC_2pops:
 		expand("{timeStamp}/{nameA}_{nameB}.ms", timeStamp=timeStamp, nameA=nameA, nameB=nameB),
 		expand("{timeStamp}/Nref.txt", timeStamp=timeStamp),
 		expand("{timeStamp}/config.yaml", timeStamp=timeStamp)
-	threads: 8
+	threads: 1
 	shell:
 		"""
 #		module load conda;

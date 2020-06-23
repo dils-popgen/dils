@@ -1,3 +1,1 @@
 yaml	mail_address	speciesA	speciesB	bestModel	probaMigration	probaMigHetero	status	piA	piB	netDivergence
-chimalNoSFS	camille.roux@univ-lille.fr	chi	mal	isolation	0.10115	0	species	0.02467	0.02458	0.02075
-ScrippsSpring	christelle.fraisse@ist.ac.at	Scripps	Spring	isolation	0.0965	0	species	0.01371	0.0216	0.10156

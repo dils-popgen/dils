@@ -672,16 +672,18 @@ run_ABC <- fluidPage(
 	
 	# PRINT INPUT
 	fluidRow(
-		column(width = 12,
-			boxPlus(
-				title = h2("Information summary"), width = NULL, icon = "fa fa-heart", solidHeader = TRUE, gradientColor = "teal",
-				boxToolSize = "lg", footer_padding = TRUE, collapsible = TRUE, collapsed = TRUE, closable = FALSE,
-				enable_label = TRUE, label_text = "Please check the following information", label_status = "success",
-
-				tableOutput("parameters")
-			)
-		),
-		
+#		column(width = 12,
+#			boxPlus(
+#				title = h2("Information summary"), width = NULL, icon = "fa fa-heart", solidHeader = TRUE, gradientColor = "teal",
+#				boxToolSize = "lg", footer_padding = TRUE, collapsible = TRUE, collapsed = TRUE, closable = FALSE,
+#				enable_label = TRUE, label_text = "Please check the following information", label_status = "success",
+#
+#				tableOutput("parameters")
+#			)
+#		),
+		# Information summary
+		uiOutput('information_summary'),
+			
 		# RUN ABC
 		uiOutput("run_ABC")
 	)
@@ -1290,6 +1292,7 @@ server <- function(input, output, session = session) {
 			if(nspecies == 2){
 				species_names = c(input$nameA, input$nameB)
 				species_names_row = c('nameA', "nameB")
+				useSFS = input$use_SFS
 			} else{
 				if(nspecies == 4){
 					species_names = c(input$nameA, input$nameB, input$nameC, input$nameD) # name of the simulated species
@@ -1321,8 +1324,8 @@ server <- function(input, output, session = session) {
 			res = matrix(c(mail_address, config_yaml, infile, region, nspecies, species_names, nameOutgroup, Lmin, nMin, mu, rho_over_theta, N_min, N_max, Tsplit_min, Tsplit_max, population_growth), ncol = 1)
 			row_names_res = c("user's email address", "config_yaml", "infile", "region", "nspecies", species_names_row, "nameOutgroup", "Lmin", "nMin", "mu", "rho_over_theta", "N_min", "N_max", "Tchanges_min", "Tchanges_max", "population_growth")
 		}else{
-			res = matrix(c(mail_address, config_yaml, infile, region, nspecies, species_names, nameOutgroup, Lmin, nMin, mu, rho_over_theta, N_min, N_max, Tsplit_min, Tsplit_max, M_min, M_max, population_growth), ncol = 1)
-			row_names_res = c("user's email address", "config_yaml", "infile", "region", "nspecies", species_names_row, "nameOutgroup", "Lmin", "nMin", "mu", "rho_over_theta", "N_min", "N_max", "Tsplit_min", "Tsplit_max", "M_min", "M_max", "population_growth")
+			res = matrix(c(mail_address, config_yaml, infile, region, nspecies, species_names, nameOutgroup, useSFS, Lmin, nMin, mu, rho_over_theta, N_min, N_max, Tsplit_min, Tsplit_max, M_min, M_max, population_growth), ncol = 1)
+			row_names_res = c("user's email address", "config_yaml", "infile", "region", "nspecies", species_names_row, "nameOutgroup", "useSFS", "Lmin", "nMin", "mu", "rho_over_theta", "N_min", "N_max", "Tsplit_min", "Tsplit_max", "M_min", "M_max", "population_growth")
 		}
 		
 		row.names(res) = row_names_res
@@ -1330,6 +1333,21 @@ server <- function(input, output, session = session) {
 		
 		res	
 	}, rownames = TRUE, colnames = TRUE)
+
+
+	output$information_summary <- renderUI({
+		if(is.null(input$infile)==FALSE && input$check_upload == TRUE && input$check_filtering == TRUE && input$check_populations == TRUE && input$check_prior == TRUE){
+			column(width = 12,
+				boxPlus(
+					title = h2("Information summary"), width = NULL, icon = "fa fa-heart", solidHeader = TRUE, gradientColor = "teal",
+					boxToolSize = "lg", footer_padding = TRUE, collapsible = TRUE, collapsed = TRUE, closable = FALSE,
+					enable_label = TRUE, label_text = "Please check the following information", label_status = "success",
+
+					tableOutput("parameters")
+				)
+			)
+		}else{return()}
+	})
 	
 	# RUN ABC
 	## only show the action button RUN ABC if a file is uploaded and 4 checkings were made
@@ -1342,12 +1360,12 @@ server <- function(input, output, session = session) {
 					enable_label = TRUE, label_text = "Are you ready?", label_status = "danger",
 					h3('Laptop or bigger?'),
 				#	switchInput(inputId = 'lightExecution', value=TRUE, label = 'light mode', status = 'default', inline=T),
-					HTML('<H4>ABC inferences can be greedy.<br>For instance, in 2-populations analysis, Normal mode will execute 874 jobs while the Light mode will execute 184 jobs<br>On a laptop: use Light mode.<br>Just be aware that a light mode will be handy for exploring priors, will have very little impact on model comparisons but parameter estimates will not be great.</H4>'),
+					HTML('<H4>ABC inferences can be greedy.<br>For instance, in 2-populations analysis, Normal mode will execute 874 jobs against 184 in the Light mode<br>On a laptop: use Light mode.<br>Just be aware that a light mode will be handy for exploring priors, will have very little impact on model comparisons but parameter estimates may not be great.<br><br>The activated mode is the visible one:</H4>'),
 					switchInput(inputId = 'lightMode', offLabel = 'Normal mode', onLabel = 'Light mode', onStatus = 'success', offStatus = 'primary', value = F, labelWidth = '100px', size = 'large'),
 					hr(),
 					
 					h3('Submission of the ABC workflow'),
-					actionButton('runABC', label = 'Run ABC inferences', size = 'md', width = '150px', fullwidth = TRUE),
+					actionButton('runABC', label = 'Run ABC inferences', size = 'md', width = '200px', fullwidth = TRUE, style="color: #C7F464; font-size: 18px;; background-color: #556270; border-color: #556270"),
 
 					h3('Number of submitted analysis (you can change the studied populations/species and the priors between 2 analysis):'),
 					verbatimTextOutput('nClicks'),
@@ -1362,70 +1380,82 @@ server <- function(input, output, session = session) {
 			)
 		}else{return()}
 	})
-	
+
+	## confirmation of the click on "run the ABC" button
+	confirmed_runABC = reactiveValues(yes=0, no=0)
+	observeEvent(input$runABC, {ask_confirmation(inputId = "myconfirmation", type = "warning", title = "Are you sure ??", btn_labels = c("Nope", "Yep"), btn_colors = viridis_pal(option='D')(3)[2:3])})
+	observeEvent(input$myconfirmation, { if (isTRUE(input$myconfirmation)){confirmed_runABC$yes = confirmed_runABC$yes+1}else{confirmed_runABC$no = confirmed_runABC$no+1}}, ignoreNULL= FALSE)
+
+		
 	## print the number of clicks on the "run the ABC" button
-	output$nClicks <- renderText({ input$runABC })
-	
+#	output$nClicks <- renderText({ input$runABC })
+	output$nClicks <- renderText({ confirmed_runABC$yes })
+
 	## removing the "Run the ABC" button after clicking on it
-	observeEvent(input$runABC, {if (input$runABC == input$number_of_ABC)	removeUI(selector='#run_ABC', immediate=TRUE)}, autoDestroy=TRUE)
+#	observeEvent(input$runABC, {if (input$runABC == input$number_of_ABC)	removeUI(selector='#run_ABC', immediate=TRUE)}, autoDestroy=TRUE)
+	observeEvent(input$myconfirmation, {if (confirmed_runABC$yes == input$number_of_ABC)	removeUI(selector='#run_ABC', immediate=TRUE)}, autoDestroy=TRUE)
+	observeEvent(input$myconfirmation, {if (confirmed_runABC$yes == input$number_of_ABC)	removeUI(selector='#information_summary', immediate=TRUE)}, autoDestroy=TRUE)
 	
 	## get a time stamp when clicking on the "Run the ABC" button
 	time_stamp <- reactiveVal(0)
 
 	metaanalysis_file <- "webinterface/metaanalysis.txt"
 
-	observeEvent( input$runABC, {time_stamp(system('echo $(mktemp -d -t XXXXXXXXXX | cut -d"/" -f3)', intern=T))})
+	observeEvent( input$myconfirmation, { if(isTRUE(input$myconfirmation)){time_stamp(system('echo $(mktemp -d -t XXXXXXXXXX | cut -d"/" -f3)', intern=T))}}, ignoreNULL=FALSE)
 	output$time_stamp <- renderText({time_stamp()})
 
 	## write the yaml file
 	output$global <- renderText({global$datapath})
 
-	observeEvent(input$runABC, {	
-		if(input$presence_outgroup == 'yes'){
-			nameOutgroup = input$nameOutgroup
-		}else{
-			nameOutgroup = "NA"
-		}
-		
-		yaml_name = paste(global$datapath, '/', time_stamp(), '.yaml', sep='')
-		write(paste("mail_address:", input$mail_address, sep=' '), file = yaml_name, append=F)
-		write(paste("infile:", input$infile$datapath, sep=' '), file = yaml_name, append=T) # TO CHECK
-		write(paste("region:", input$region, sep=' '), file = yaml_name, append=T)
-		write(paste("nspecies:", input$nspecies, sep=' '), file = yaml_name, append=T)
-		write(paste("nameA:", input$nameA, sep=' '), file = yaml_name, append=T)
-		if(input$nspecies == 2){
-			write(paste("nameB:", input$nameB, sep=' '), file = yaml_name, append=T)
-		}
-		
-		write(paste("nameOutgroup:", nameOutgroup, sep=' '), file = yaml_name, append=T)
-		if(input$nspecies == 2){
-			write(paste("useSFS:", input$use_SFS, sep=' '), file = yaml_name, append=T)
-		}
-		write(paste("lightMode:", input$lightMode, sep=' '), file = yaml_name, append=T)
-		write(paste("config_yaml:", yaml_name, sep=' '), file = yaml_name, append=T)
-		write(paste("timeStamp:", time_stamp(), sep=' '), file = yaml_name, append=T)
-		if(input$nspecies == 2){
-			write(paste("population_growth:", input$population_growth, sep=' '), file = yaml_name, append=T)
-			write(paste("modeBarrier:", input$modeBarrier, sep=' '), file = yaml_name, append=T)
-		}
-		
-		write(paste("max_N_tolerated:", input$max_N_tolerated, sep=' '), file = yaml_name, append=T)
-		write(paste("Lmin:", input$Lmin, sep=' '), file = yaml_name, append=T)
-		write(paste("nMin:", input$nMin, sep=' '), file = yaml_name, append=T)
-		write(paste("mu:", input$mu, sep=' '), file = yaml_name, append=T)
-		write(paste("rho_over_theta:", input$rho_over_theta, sep=' '), file = yaml_name, append=T)
-		write(paste("N_min:", input$N_min, sep=' '), file = yaml_name, append=T)
-		write(paste("N_max:", input$N_max, sep=' '), file = yaml_name, append=T)
-		if(input$nspecies == 1){
-			write(paste("Tchanges_min:", input$Tsplit_min, sep=' '), file = yaml_name, append=T)
-			write(paste("Tchanges_max:", input$Tsplit_max, sep=' '), file = yaml_name, append=T)
-		}
-		
-		if(input$nspecies == 2){
-			write(paste("Tsplit_min:", input$Tsplit_min, sep=' '), file = yaml_name, append=T)
-			write(paste("Tsplit_max:", input$Tsplit_max, sep=' '), file = yaml_name, append=T)
-			write(paste("M_min:", input$M_min, sep=' '), file = yaml_name, append=T)
-			write(paste("M_max:", input$M_max, sep=' '), file = yaml_name, append=T)
+#	observeEvent(input$runABC, {	
+	observeEvent(input$myconfirmation, {
+		if(isTRUE(input$myconfirmation)){
+			if(input$presence_outgroup == 'yes'){
+				nameOutgroup = input$nameOutgroup
+			}else{
+				nameOutgroup = "NA"
+			}
+			
+			yaml_name = paste(global$datapath, '/', time_stamp(), '.yaml', sep='')
+			write(paste("mail_address:", input$mail_address, sep=' '), file = yaml_name, append=F)
+			write(paste("infile:", input$infile$datapath, sep=' '), file = yaml_name, append=T) # TO CHECK
+			write(paste("region:", input$region, sep=' '), file = yaml_name, append=T)
+			write(paste("nspecies:", input$nspecies, sep=' '), file = yaml_name, append=T)
+			write(paste("nameA:", input$nameA, sep=' '), file = yaml_name, append=T)
+			if(input$nspecies == 2){
+				write(paste("nameB:", input$nameB, sep=' '), file = yaml_name, append=T)
+			}
+			
+			write(paste("nameOutgroup:", nameOutgroup, sep=' '), file = yaml_name, append=T)
+			if(input$nspecies == 2){
+				write(paste("useSFS:", input$use_SFS, sep=' '), file = yaml_name, append=T)
+			}
+			write(paste("lightMode:", input$lightMode, sep=' '), file = yaml_name, append=T)
+			write(paste("config_yaml:", yaml_name, sep=' '), file = yaml_name, append=T)
+			write(paste("timeStamp:", time_stamp(), sep=' '), file = yaml_name, append=T)
+			if(input$nspecies == 2){
+				write(paste("population_growth:", input$population_growth, sep=' '), file = yaml_name, append=T)
+				write(paste("modeBarrier:", input$modeBarrier, sep=' '), file = yaml_name, append=T)
+			}
+			
+			write(paste("max_N_tolerated:", input$max_N_tolerated, sep=' '), file = yaml_name, append=T)
+			write(paste("Lmin:", input$Lmin, sep=' '), file = yaml_name, append=T)
+			write(paste("nMin:", input$nMin, sep=' '), file = yaml_name, append=T)
+			write(paste("mu:", input$mu, sep=' '), file = yaml_name, append=T)
+			write(paste("rho_over_theta:", input$rho_over_theta, sep=' '), file = yaml_name, append=T)
+			write(paste("N_min:", input$N_min, sep=' '), file = yaml_name, append=T)
+			write(paste("N_max:", input$N_max, sep=' '), file = yaml_name, append=T)
+			if(input$nspecies == 1){
+				write(paste("Tchanges_min:", input$Tsplit_min, sep=' '), file = yaml_name, append=T)
+				write(paste("Tchanges_max:", input$Tsplit_max, sep=' '), file = yaml_name, append=T)
+			}
+			
+			if(input$nspecies == 2){
+				write(paste("Tsplit_min:", input$Tsplit_min, sep=' '), file = yaml_name, append=T)
+				write(paste("Tsplit_max:", input$Tsplit_max, sep=' '), file = yaml_name, append=T)
+				write(paste("M_min:", input$M_min, sep=' '), file = yaml_name, append=T)
+				write(paste("M_max:", input$M_max, sep=' '), file = yaml_name, append=T)
+			}
 		}
 	})
 		
@@ -1434,23 +1464,24 @@ server <- function(input, output, session = session) {
 	## snakemake command
 	DILS_command <- reactiveVal(0)
 
-	observeEvent( input$runABC, {
-		if(input$nspecies==1){
-#			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
-			commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --latency-wait 20 --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
-#				commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_1pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
-			cat(commande)
-			DILS_command(system(commande))
-		}
-		
-		if(input$nspecies==2){
-#			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
-			commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --latency-wait 20 --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
-#				commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_2pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
-			cat(commande)
-			DILS_command(system(commande))
-		}
-	})
+	observeEvent( input$myconfirmation, {
+		if(isTRUE(input$myconfirmation)){
+			if(input$nspecies==1){
+	#			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
+				commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --latency-wait 20 --configfile ', time_stamp(), '.yaml &', sep='') # without Slurm 
+	#				commande = paste('snakemake --snakefile /tools/bin/Snakefile_1pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_1pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
+				cat(commande)
+				DILS_command(system(commande))
+			}
+			
+			if(input$nspecies==2){
+	#			commande = paste('singularity exec popgenomics.sif snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
+				commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --latency-wait 20 --configfile ', time_stamp(), '.yaml &', sep='') # without slurm
+	#				commande = paste('snakemake --snakefile /tools/bin/Snakefile_2pop -p -j ', nCPU_server, ' --configfile ', time_stamp(), '.yaml --cluster-config /tools/bin/cluster_2pop.json --cluster "sbatch --nodes={cluster.node} --ntasks={cluster.n} --cpus-per-task={cluster.cpusPerTask} --time={cluster.time}" &', sep='') # with slurm
+				cat(commande)
+				DILS_command(system(commande))
+			}
+	}})
 	
 
 		
