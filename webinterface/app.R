@@ -741,9 +741,9 @@ information <- fluidPage(
 			#box(title = h2("Citations"), width = 12, solidHeader = TRUE, background = NULL, status = "primary",
 			boxPlus(title = h2("Citations"), width = NULL, closable = FALSE, status = "warning", solidHeader = FALSE, collapsible = FALSE, collapsed = FALSE,
 				h3("Please, in case of publication of a study using DILS, do not forget to quote the following references:"),
+				HTML('<h3><font color="#1e2b37"><i>Fraisse, Christelle, Iva Popovic, Jonathan Romiguier, Etienne Loire, Alexis Simon, Nicolas Galtier, Laurent Duret, Nicolas Bierne, Xavier Vekemans, and Camille Roux. "DILS: Demographic Inferences with Linked Selection by using ABC." bioRxiv (2020).</i></font></h3>'),
 				HTML('<h3><font color="#1e2b37"><i>Csill&eacute;ry Katalin, Olivier Fran&ccedil;ois, and Michael GB Blum. "abc: an R package for approximate Bayesian computation (ABC)." Methods in ecology and evolution 3.3 (2012): 475-479.</i></font></h3>'),
-				HTML('<h3><font color="#1e2b37"><i>Pudlo Pierre, Jean-Michel Marin, Arnaud Estoup, Jean-Marie Cornuet, Mathieu Gautier, and Christian P. Robert. "Reliable ABC model choice via random forests." Bioinformatics 32, no. 6 (2015): 859-866.</i></h3>'),
-				HTML('<h3><font color="#1e2b37"><i>Roux Camille, Christelle Fra&iuml;sse, Jonathan Romiguier, Yoann Anciaux, Nicolas Galtier, and Nicolas Bierne. "Shedding light on the grey zone of speciation along a continuum of genomic divergence." PLoS biology 14, no. 12 (2016): e2000234.</i></font></h3>')
+				HTML('<h3><font color="#1e2b37"><i>Pudlo Pierre, Jean-Michel Marin, Arnaud Estoup, Jean-Marie Cornuet, Mathieu Gautier, and Christian P. Robert. "Reliable ABC model choice via random forests." Bioinformatics 32, no. 6 (2015): 859-866.</i></h3>')
 			),
 			
 			#box(title = h2("Acknowledgment"), width = 12, solidHeader = TRUE, background = NULL, status = "primary",
