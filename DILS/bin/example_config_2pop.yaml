@@ -5,6 +5,7 @@ nspecies: 2
 nameA: txn
 nameB: ama
 nameOutgroup: NA
+useSFS: 0
 config_yaml: /home/croux/Programmes/DILS/bin/example_config_2pop.yaml 
 timeStamp: variableBeta3roundsV3
 population_growth: variable
