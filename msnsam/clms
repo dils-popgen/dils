@@ -1,0 +1,4 @@
+gcc -O2 -o msnsam  msnsam.c  rand1.c streec.c -lm
+gcc -o samplestats tajd.c sample_stats.c -lm
+gcc -o mean_std stats.c -lm
+

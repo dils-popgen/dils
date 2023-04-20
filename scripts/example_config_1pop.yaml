@@ -1,0 +1,19 @@
+mail_address: user@gmail.com
+infile: /home/data/myFasta.fasta
+region: noncoding
+nspecies: 1
+nameA: speciesName
+nameOutgroup: NA
+lightMode: FALSE
+config_yaml: /home/analysis/example_config_1pop.yaml
+timeStamp: project1pop
+max_N_tolerated: 0.2
+Lmin: 150
+nMin: 150
+mu: 1e-08
+rho_over_theta: 0.8
+N_min: 0
+N_max: 100000
+Tchanges_min: 0
+Tchanges_max: 200000
+
