@@ -1,1 +1,0 @@
-yaml	mail_address	speciesA	speciesB	bestModel	probaMigration	probaMigHetero	status	piA	piB	netDivergence
